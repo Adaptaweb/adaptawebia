@@ -31,5 +31,9 @@ pnpm-debug.log*
 # Windows
 Thumbs.db
 
+# opencode config
+.agents/
+.opencode/
+
 # stray artifacts
 nul
