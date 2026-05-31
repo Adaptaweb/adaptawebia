@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navigation from "../components/Navigation.astro";
+import ThreeBackground from "../components/ThreeBackground.astro";
+import Hero from "../components/Hero.astro";
+import BentoGrid from "../components/BentoGrid.astro";
+import SkillsSection from "../components/SkillsSection.astro";
+import ContactGlobeWrapper from "../components/ContactGlobeWrapper.astro";
+import FooterWrapper from "../components/FooterWrapper.astro";
+---
+
+<BaseLayout
+  title="AdaptaWeb — Desarrollo Inteligente con IA"
+  description="Creamos aplicaciones móviles y plataformas web que, gracias a la IA, se adaptan en tiempo real al comportamiento de los usuarios."
+>
+  <ThreeBackground />
+  <Navigation />
+  <main class="relative z-10">
+    <Hero />
+    <BentoGrid />
+    <SkillsSection />
+    <ContactGlobeWrapper />
+  </main>
+  <FooterWrapper />
+</BaseLayout>
+
+<script>
+import { initHeroReveal, initScrollReveal } from "../scripts/scroll-reveal";
+
+document.addEventListener("DOMContentLoaded", () => {
+  initHeroReveal();
+  initScrollReveal();
+});
+</script>

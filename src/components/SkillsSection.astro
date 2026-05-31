@@ -1,0 +1,86 @@
+---
+import ReactIcon from "../icons/React.astro";
+import NodeJsIcon from "../icons/NodeJs.astro";
+import PythonIcon from "../icons/Python.astro";
+import AstroIcon from "../icons/AstroIcon.astro";
+import TailwindIcon from "../icons/Tailwind.astro";
+import LaravelIcon from "../icons/Laravel.astro";
+import Css3Icon from "../icons/Css3.astro";
+import ThreeJsIcon from "../icons/ThreeJs.astro";
+import OpenCodeIcon from "../icons/OpenCode.astro";
+import ClaudeCodeIcon from "../icons/ClaudeCode.astro";
+
+const skills = [
+  { name: "React", Icon: ReactIcon },
+  { name: "Node.js", Icon: NodeJsIcon },
+  { name: "Python", Icon: PythonIcon },
+  { name: "Astro", Icon: AstroIcon },
+  { name: "Tailwind CSS", Icon: TailwindIcon },
+  { name: "Laravel", Icon: LaravelIcon },
+  { name: "CSS3", Icon: Css3Icon },
+  { name: "Three.js", Icon: ThreeJsIcon },
+  { name: "OpenCode", Icon: OpenCodeIcon },
+  { name: "Claude Code", Icon: ClaudeCodeIcon },
+];
+---
+
+<section id="skills" class="relative py-24 md:py-32 overflow-hidden">
+  <div class="mx-auto max-w-[1200px] px-6">
+    <div class="mb-16 text-center" data-reveal>
+      <p class="font-mono text-xs tracking-[0.25em] text-primary mb-4 uppercase">Stack Tecnológico</p>
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-white">
+        Tecnologías que dominamos
+      </h2>
+    </div>
+    <div
+      id="skills-grid"
+      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-5"
+      data-reveal
+    >
+      {skills.map(({ name, Icon }) => (
+        <div
+          class="skill-item group relative flex flex-col items-center justify-center gap-3 p-6 md:p-8 rounded-xl border border-white/5 bg-secondary/10 backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] transition-all duration-300 cursor-default"
+        >
+          <div class="w-12 h-12 md:w-14 md:h-14 text-text-muted group-hover:text-primary transition-colors duration-300">
+            <Icon />
+          </div>
+          <span class="text-xs md:text-sm font-medium text-text-dim group-hover:text-text-primary transition-colors duration-300 text-center">
+            {name}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+const grid = document.getElementById("skills-grid");
+if (grid && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const items = grid.querySelectorAll(".skill-item");
+  const strength = 0.15;
+
+  items.forEach((item) => {
+    item.addEventListener("pointermove", (e) => {
+      const rect = item.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > 120) return;
+      const pull = (120 - dist) / 120 * strength;
+      const tx = dx * pull;
+      const ty = dy * pull;
+      item.style.transform = `translate(${tx}px, ${ty}px) scale(1.08)`;
+      item.style.borderColor = "rgba(69,255,140,0.5)";
+    });
+
+    item.addEventListener("pointerleave", () => {
+      item.style.transform = "translate(0, 0) scale(1)";
+      item.style.borderColor = "";
+      item.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s";
+      setTimeout(() => { item.style.transition = ""; }, 400);
+    });
+  });
+}
+</script>

@@ -1,0 +1,18 @@
+---
+import Logo from "./Logo.astro";
+---
+
+<nav class="fixed top-0 left-0 right-0 z-50 h-16 md:h-18">
+  <div class="absolute inset-0 bg-surface/80 backdrop-blur-xl border-b border-border" />
+  <div class="relative mx-auto max-w-[1400px] h-full px-6 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2.5 group">
+      <Logo size={32} class="text-white group-hover:text-primary transition-colors duration-300" />
+      <span class="font-semibold text-sm tracking-tight text-text-primary">AdaptaWeb</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#servicios" class="text-sm text-text-muted hover:text-text-primary transition-colors duration-200">Servicios</a>
+      <a href="#skills" class="text-sm text-text-muted hover:text-text-primary transition-colors duration-200">Tecnologías</a>
+      <a href="#contacto" class="text-sm font-medium text-primary hover:text-primary/80 transition-colors duration-200">Contacto</a>
+    </div>
+  </div>
+</nav>

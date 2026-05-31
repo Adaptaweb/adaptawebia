@@ -1,0 +1,166 @@
+"use client";
+
+import { motion, type Variants } from "motion/react";
+import { ArrowRight } from "lucide-react";
+import { useState, type FormEvent } from "react";
+
+const containerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.07, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: "easeOut" as const },
+  },
+};
+
+const NAV_LINKS = [
+  { text: "Inicio", url: "#" },
+  { text: "Servicios", url: "#servicios" },
+  { text: "Skills", url: "#skills" },
+  { text: "Contacto", url: "#contacto" },
+];
+
+export default function FooterWithNewsletter() {
+  const [email, setEmail] = useState("");
+
+  const handleNewsletter = (e: FormEvent) => {
+    e.preventDefault();
+    console.log("Newsletter subscription:", email);
+    setEmail("");
+  };
+
+  return (
+    <footer className="relative z-1 w-full bg-secondary/10 backdrop-blur-xl border-t border-white/5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] py-20">
+      <div className="mx-auto max-w-[1200px] px-6">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <motion.div variants={itemVariants}>
+              <span className="text-[clamp(2.8rem,9vw,5rem)] font-black leading-none tracking-tighter text-white uppercase select-none">
+                Adapta
+                <span className="inline-flex items-center justify-center ml-1 w-[0.72em] h-[0.72em] rounded-full border-[0.07em] border-primary text-[0.45em] font-black align-middle relative -top-[0.08em] text-primary">
+                  W
+                </span>
+              </span>
+            </motion.div>
+
+            <motion.p
+              variants={itemVariants}
+              className="text-[clamp(1.1rem,3.5vw,2rem)] font-black uppercase leading-tight tracking-tight text-text-muted md:text-right md:max-w-sm"
+            >
+              Desarrollo Inteligente con IA
+            </motion.p>
+          </div>
+
+          <motion.div
+            variants={itemVariants}
+            className="mt-8 border-t border-white/10"
+          />
+
+          <div className="mt-8 flex flex-col gap-10 md:flex-row md:gap-16 md:justify-between pb-8">
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col gap-3 md:max-w-xs w-full"
+            >
+              <p className="text-sm font-semibold text-white">
+                Newsletter
+              </p>
+              <form onSubmit={handleNewsletter} className="flex items-center bg-black/20 backdrop-blur-xl rounded-xl overflow-hidden border border-white/5">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="tu@email.com"
+                  required
+                  className="flex-1 px-4 py-3 text-sm text-white bg-transparent outline-none placeholder:text-text-dim"
+                />
+                <button
+                  type="submit"
+                  className="m-1.5 flex items-center justify-center w-9 h-9 rounded-lg bg-primary text-surface hover:bg-primary/80 transition-colors"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
+              <p className="text-xs text-text-dim">
+                Sin spam. Solo novedades y lanzamientos.
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={containerVariants}
+              className="grid grid-cols-2 gap-x-12 gap-y-2 md:gap-x-20 self-start"
+            >
+              <ul className="flex flex-col gap-2.5">
+                {NAV_LINKS.map((link, i) => (
+                  <motion.li key={i} variants={itemVariants}>
+                    <a
+                      href={link.url}
+                      className="text-sm font-bold uppercase tracking-wide text-text-muted hover:text-primary transition-colors"
+                    >
+                      {link.text}
+                    </a>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
+
+          <motion.div
+            variants={itemVariants}
+            className="border-t border-white/10"
+          />
+
+          <motion.div
+            variants={itemVariants}
+            className="flex items-center justify-between py-5"
+          >
+            <p className="text-xs text-text-dim w-1/3">
+              &copy; {new Date().getFullYear()} AdaptaWeb
+            </p>
+            <div className="flex items-center justify-center gap-4 w-1/3">
+              <a
+                href="https://github.com/Adaptaweb"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className="flex items-center justify-center w-9 h-9 rounded-full border border-white/10 text-text-muted hover:border-primary hover:text-primary transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                  <path d="M9 18c-4.51 2-5-2-7-2" />
+                </svg>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/alejandro-tamayo-e/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="flex items-center justify-center w-9 h-9 rounded-full border border-white/10 text-text-muted hover:border-primary hover:text-primary transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect width="4" height="12" x="2" y="9" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+              </a>
+            </div>
+            <p className="text-xs text-text-dim w-1/3 text-right">
+              adaptaweb.com
+            </p>
+          </motion.div>
+        </motion.div>
+      </div>
+    </footer>
+  );
+}

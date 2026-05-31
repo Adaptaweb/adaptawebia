@@ -1,0 +1,65 @@
+---
+interface Props {
+  class?: string;
+  size?: number;
+}
+
+const { class: className, size = 40 } = Astro.props;
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-label="AdaptaWeb logo"
+>
+  <!-- A letter: left diagonal -->
+  <path
+    d="M8 40L18 10L24 28"
+    stroke="currentColor"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- A letter: right diagonal -->
+  <path
+    d="M40 40L30 10L26 22"
+    stroke="currentColor"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- A crossbar -->
+  <line
+    x1="16" y1="30" x2="32" y2="30"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+  />
+  <!-- W left stroke -->
+  <path
+    d="M6 38L12 24L18 34L24 20"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- W right stroke extended as neural node -->
+  <path
+    d="M24 20L30 34L36 24L42 38"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- Neural node at extension point -->
+  <circle cx="42" cy="38" r="3" fill="#45FF8C" />
+  <circle cx="42" cy="38" r="5" stroke="#45FF8C" stroke-width="1" opacity="0.4" />
+  <!-- Connection lines from neural node -->
+  <line x1="45" y1="38" x2="48" y2="42" stroke="#45FF8C" stroke-width="1" opacity="0.3" stroke-linecap="round" />
+  <line x1="46" y1="35" x2="48" y2="34" stroke="#45FF8C" stroke-width="1" opacity="0.3" stroke-linecap="round" />
+  <line x1="44" y1="41" x2="46" y2="44" stroke="#45FF8C" stroke-width="1" opacity="0.3" stroke-linecap="round" />
+</svg>

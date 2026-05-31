@@ -1,0 +1,25 @@
+---
+interface Props {
+  class?: string;
+  children?: string;
+}
+
+const { class: className, children = "Iniciar Proyecto" } = Astro.props;
+---
+
+<button
+  class={`${className ?? ""} group relative inline-flex items-center gap-2 px-8 py-4 overflow-hidden rounded-full bg-primary text-surface font-semibold text-base transition-all duration-300 active:scale-[0.98] cursor-pointer`}
+  data-cta
+>
+  <span class="relative z-10">{children}</span>
+  <svg
+    class="relative z-10 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round"
+  >
+    <path d="M5 12h14M12 5l7 7-7 7" />
+  </svg>
+  <!-- Glow ring -->
+  <div class="absolute inset-0 rounded-full border border-primary/50" />
+  <div class="absolute -inset-[2px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background: conic-gradient(from 0deg, transparent, rgba(69,255,140,0.3), transparent, rgba(69,255,140,0.15), transparent); animation: spin-slow 3s linear infinite;" />
+</button>
