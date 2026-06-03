@@ -57,8 +57,9 @@ export const POST: APIRoute = async ({ request }) => {
 
     const resendApiKey = import.meta.env.RESEND_API_KEY;
     if (resendApiKey) {
+      const resend = new Resend(resendApiKey);
+
       try {
-        const resend = new Resend(resendApiKey);
         await resend.emails.send({
           from: 'noreply@adaptaweb.cl',
           to: 'hola@adaptaweb.cl',
