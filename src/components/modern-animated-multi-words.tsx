@@ -163,7 +163,7 @@ export function ContainerTextFlip({
               }}
               className={cn(
                 "text-4xl md:text-6xl lg:text-7xl font-black tracking-tight",
-                "text-center whitespace-nowrap",
+                "text-center sm:whitespace-nowrap",
                 textClassName
               )}
             >

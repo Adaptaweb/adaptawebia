@@ -64,7 +64,7 @@ export default function HeroContactSection() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-20">
           {/* LEFT: Hero Text */}
           <div className="flex flex-col justify-center pt-8 lg:pt-16">
-            <h1 className="max-w-[6em] text-5xl font-bold leading-none tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl" data-reveal>
+            <h1 className="overflow-hidden text-5xl font-bold leading-none tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl" data-reveal>
               <span className="lustre-hero">Creamos Aplicaciones</span>
               <br />
               <ContainerTextFlip
@@ -72,7 +72,7 @@ export default function HeroContactSection() {
                 interval={5000}
                 animationDuration={100}
                 variant="glass"
-                textClassName="text-primary text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tighter"
+                textClassName="text-primary text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tighter"
               />
             </h1>
             <p class="mt-8 text-base md:text-lg text-text-muted max-w-[65ch] leading-relaxed" data-reveal>
@@ -126,7 +126,7 @@ export default function HeroContactSection() {
                 </div>
               </div>
 
-              <div className="relative h-52 overflow-hidden">
+              <div className="relative h-52 md:h-64 lg:h-72 overflow-hidden">
                 <GlobeWireframe
                   className="absolute left-0 top-0 aspect-square w-full max-w-full"
                   variant="wireframesolid"

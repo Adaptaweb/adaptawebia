@@ -61,7 +61,7 @@ export function Features({ features }: FeaturesProps) {
       <div className="grid lg:grid-cols-2 lg:gap-16 gap-8 items-center">
         <div
           ref={containerRef}
-          className="lg:space-y-6 md:space-x-6 lg:space-x-0 overflow-x-auto overflow-hidden lg:overflow-visible flex lg:flex lg:flex-col flex-row order-1 pb-4 scroll-smooth"
+          className="lg:space-y-6 md:space-x-6 lg:space-x-0 overflow-x-auto lg:overflow-visible flex lg:flex lg:flex-col flex-row order-1 pb-4 scroll-smooth"
         >
           {features.map((feature, index) => {
             const Icon = feature.icon;
