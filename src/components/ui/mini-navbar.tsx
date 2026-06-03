@@ -84,7 +84,7 @@ export function MiniNavbar() {
 
         <div className="hidden sm:flex items-center gap-3">
           <a
-            href="#contacto"
+            href="#hero"
             className="relative group px-4 py-2 text-xs sm:text-sm font-semibold text-black bg-gradient-to-br from-primary to-primary/80 rounded-full hover:from-primary/90 hover:to-primary/70 transition-all duration-200"
           >
             Contacto
@@ -126,7 +126,7 @@ export function MiniNavbar() {
         </nav>
         <div className="flex flex-col items-center space-y-4 mt-4 w-full pb-2">
           <a
-            href="#contacto"
+            href="#hero"
             className="px-4 py-2 text-sm font-semibold text-black bg-gradient-to-br from-primary to-primary/80 rounded-full hover:from-primary/90 hover:to-primary/70 transition-all duration-200 text-center w-full"
             onClick={() => setIsOpen(false)}
           >

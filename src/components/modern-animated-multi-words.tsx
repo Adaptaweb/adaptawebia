@@ -59,7 +59,7 @@ export function ContainerTextFlip({
         };
       case "glass":
         return {
-          container: "backdrop-blur-xl text-white shadow-2xl shadow-black/20 border border-white/20",
+          container: "backdrop-blur-xl text-white shadow-2xl shadow-black/20 border border-white/10",
           glow: ""
         };
       default: // gradient
@@ -194,11 +194,7 @@ export function ContainerTextFlip({
           </AnimatePresence>
         </div>
 
-        {/* Decorative corners */}
-        <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-white/30 rounded-tl-lg" />
-        <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-white/30 rounded-tr-lg" />
-        <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-white/30 rounded-bl-lg" />
-        <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-white/30 rounded-br-lg" />
+        
       </motion.div>
     </div>
   );

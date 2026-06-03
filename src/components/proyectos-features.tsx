@@ -74,11 +74,9 @@ export default function ProyectosFeatures({
             className="mb-16 text-center"
             data-reveal
           >
-            <p className="font-mono text-xs tracking-[0.25em] text-primary mb-4 uppercase">
-              Proyectos
-            </p>
+            
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-white max-w-xl mx-auto">
-              Nuestros productos en vivo
+              Nuestras Aplicaciones
             </h2>
             <p className="mt-4 text-sm text-text-muted md:text-base max-w-xl mx-auto">
               Soluciones que ya están en producción, diseñadas para resolver

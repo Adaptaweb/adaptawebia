@@ -2,11 +2,10 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Navigation from "../components/Navigation.astro";
 import ThreeBackground from "../components/ThreeBackground.astro";
-import Hero from "../components/Hero.astro";
+import HeroContact from "../components/HeroContact.astro";
 import Servicios from "../components/Servicios.astro";
 import SkillsSection from "../components/SkillsSection.astro";
 import ProyectosWrapper from "../components/ProyectosWrapper.astro";
-import ContactGlobeWrapper from "../components/ContactGlobeWrapper.astro";
 import FooterWrapper from "../components/FooterWrapper.astro";
 import { SeparatorPro } from "../components/ui/seperatorpro";
 ---
@@ -18,7 +17,7 @@ import { SeparatorPro } from "../components/ui/seperatorpro";
   <ThreeBackground />
   <Navigation />
   <main class="relative z-10">
-    <Hero />
+    <HeroContact />
     <SeparatorPro variant="default" client:load />
     <Servicios />
     <SeparatorPro variant="default" client:load />
@@ -26,7 +25,6 @@ import { SeparatorPro } from "../components/ui/seperatorpro";
     <SeparatorPro variant="default" client:load />
     <SkillsSection />
     <SeparatorPro variant="default" client:load />
-    <ContactGlobeWrapper />
   </main>
   <FooterWrapper />
 </BaseLayout>

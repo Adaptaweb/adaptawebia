@@ -24,7 +24,7 @@ const NAV_LINKS = [
   { text: "Inicio", url: "#" },
   { text: "Servicios", url: "#servicios" },
   { text: "Skills", url: "#skills" },
-  { text: "Contacto", url: "#contacto" },
+  { text: "Contacto", url: "#hero" },
 ];
 
 export default function FooterWithNewsletter() {
