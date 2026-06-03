@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { SeparatorPro } from '@/components/ui/seperatorpro';
 import GlobeWireframe from '@/components/ui/globe-wireframe';
 import { ArrowRight, Mail, Info } from 'lucide-react';
+import TurnstileWidget from '@/components/ui/turnstile-widget';
 
 const smoothEase = [0.25, 0.1, 0.25, 1] as const;
 
@@ -18,6 +19,8 @@ const CONTACT_LINKS = [
 export default function HeroContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
   const [formData, setFormData] = useState({
     name: '',
@@ -40,13 +43,37 @@ export default function HeroContactSection() {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
+    if (!turnstileToken) {
+      setSubmitError('Por favor completa la verificación de seguridad');
+      return;
+    }
     setErrors({});
+    setSubmitError(null);
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    console.log('Form submitted:', formData);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, turnstileToken }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSubmitError(data.error || 'Error al enviar el formulario');
+        setIsSubmitting(false);
+        return;
+      }
+
+      setSubmitted(true);
+      setFormData({ name: '', company: '', email: '', message: '' });
+      setTurnstileToken(null);
+    } catch {
+      setSubmitError('Error de conexión. Intenta de nuevo.');
+    }
+
     setIsSubmitting(false);
-    setSubmitted(true);
-    setFormData({ name: '', company: '', email: '', message: '' });
   };
 
   useEffect(() => {
@@ -255,8 +282,8 @@ export default function HeroContactSection() {
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold  tracking-widest text-text-muted flex items-center gap-1.5">
-                          <p className='uppercase'>Mensaje</p>
+                        <label className="text-xs font-semibold uppercase tracking-widest text-text-muted flex items-center gap-1.5">
+                          Mensaje
                           <span className="relative group inline-flex">
                             <Info className="w-3.5 h-3.5 text-text-muted hover:text-primary transition-colors cursor-help shrink-0" />
                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-72 rounded-xl border border-white/10 bg-surface p-4 text-xs text-text-muted shadow-lg backdrop-blur-xl z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200">
@@ -287,9 +314,19 @@ export default function HeroContactSection() {
                       </div>
 
                       <div className="flex flex-col items-center gap-3">
+                        {submitError && (
+                          <p className="text-xs text-red-400 text-center max-w-xs">{submitError}</p>
+                        )}
+                        <TurnstileWidget
+                          onVerify={(token) => {
+                            setTurnstileToken(token);
+                            if (submitError) setSubmitError(null);
+                          }}
+                          onError={() => setSubmitError('Error al cargar la verificación de seguridad')}
+                        />
                         <Button
                           type="submit"
-                          disabled={isSubmitting}
+                          disabled={isSubmitting || !turnstileToken}
                           className="h-11 w-fit rounded-xl bg-primary px-8 text-sm font-semibold text-surface hover:bg-primary/90 disabled:opacity-50 group"
                         >
                           {isSubmitting ? (
@@ -305,10 +342,10 @@ export default function HeroContactSection() {
                           )}
                         </Button>
                         <p className="text-[10px] text-text-dim text-center max-w-xs">
-                          Protegido por reCAPTCHA de Google.{' '}
-                          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-text-muted">Privacidad</a>
+                          Protegido por Cloudflare Turnstile.{' '}
+                          <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" className="underline hover:text-text-muted">Privacidad</a>
                           {' · '}
-                          <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-text-muted">Condiciones</a>.
+                          <a href="https://www.cloudflare.com/website-terms/" target="_blank" rel="noopener noreferrer" className="underline hover:text-text-muted">Términos</a>.
                         </p>
                       </div>
                   </form>
