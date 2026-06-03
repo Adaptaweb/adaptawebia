@@ -9,7 +9,7 @@ import { useState, type FormEvent } from 'react';
 const smoothEase = [0.25, 0.1, 0.25, 1] as const;
 
 const CONTACT_LINKS = [
-  { icon: Mail, label: 'hola@adaptaweb.com', href: 'mailto:hola@adaptaweb.com' },
+  { icon: Mail, label: 'hola@adaptaweb.cl', href: 'mailto:hola@adaptaweb.cl' },
 ];
 
 interface ContactWithGlobeProps {
