@@ -58,11 +58,11 @@ export default function ProyectosFeatures({
     <section
       id="proyectos"
       className={cn(
-        "relative py-24 md:py-32 overflow-hidden px-6",
+        "relative py-24 md:py-32 overflow-hidden",
         className
       )}
     >
-      <div className="mx-auto max-w-[1200px]">
+      <div className="mx-auto w-full max-w-[1400px] px-6 2xl:max-w-[1600px] min-[2000px]:max-w-[2000px]">
         <motion.div
           variants={containerVariants}
           initial="hidden"

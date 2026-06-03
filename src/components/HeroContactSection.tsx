@@ -201,7 +201,7 @@ export default function HeroContactSection() {
                       Mensaje enviado
                     </h3>
                     <p className="text-sm text-text-muted">
-                      Gracias por contactarnos. Te responderemos pronto.
+                      Gracias por contactarnos. Nuestro equipo revisará la solicitud y te contactaremos a la brevedad dentro de nuestro horario de atención.
                     </p>
                   </motion.div>
                 ) : (

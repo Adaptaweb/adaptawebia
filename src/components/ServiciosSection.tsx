@@ -57,9 +57,9 @@ export default function ServiciosSection() {
   return (
     <section
       id="servicios"
-      className="relative overflow-hidden px-6 py-24 md:py-32"
+      className="relative overflow-hidden py-24 md:py-32"
     >
-      <div className="mx-auto max-w-[1200px]">
+      <div className="mx-auto w-full max-w-[1400px] px-6 2xl:max-w-[1600px] min-[2000px]:max-w-[2000px]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
