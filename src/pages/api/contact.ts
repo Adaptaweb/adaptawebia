@@ -64,12 +64,70 @@ export const POST: APIRoute = async ({ request }) => {
           to: 'hola@adaptaweb.cl',
           subject: `Nuevo contacto de ${name}`,
           html: `
-            <h2>Nuevo mensaje desde adaptaweb.cl</h2>
-            <p><strong>Nombre:</strong> ${name}</p>
-            <p><strong>Empresa:</strong> ${company || 'No especificada'}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Mensaje:</strong></p>
-            <p>${message}</p>
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+            </head>
+            <body style="margin:0;padding:0;background-color:#0a0a0a;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+              <table role="presentation" width="100%" style="background-color:#0a0a0a;padding:40px 20px;">
+                <tr>
+                  <td align="center">
+                    <table role="presentation" width="600" style="max-width:600px;background-color:#121212;border-radius:16px;border:1px solid rgba(255,255,255,0.05);padding:40px;">
+                      <tr>
+                        <td align="center" style="padding-bottom:28px;">
+                          <img src="https://adaptaweb.cl/logo.webp" alt="AdaptaWeb" width="48" height="48" style="border-radius:12px;opacity:0.9;" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center" style="padding-bottom:32px;">
+                          <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;letter-spacing:-0.02em;">Nuevo contacto</h1>
+                          <p style="margin:8px 0 0;font-size:14px;color:#888888;">recibido desde adaptaweb.cl</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 8px;">
+                          <table role="presentation" width="100%" style="border-collapse:separate;border-spacing:0 1px;">
+                            <tr>
+                              <td style="padding:14px 18px;background-color:#1a1a1a;border-radius:10px 10px 0 0;">
+                                <p style="margin:0;font-size:11px;color:#666666;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Nombre</p>
+                                <p style="margin:4px 0 0;font-size:15px;color:#ffffff;font-weight:500;">${name}</p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding:14px 18px;background-color:#1a1a1a;">
+                                <p style="margin:0;font-size:11px;color:#666666;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Email</p>
+                                <p style="margin:4px 0 0;font-size:15px;color:#ffffff;font-weight:500;">${email}</p>
+                              </td>
+                            </tr>
+                            ${company ? `<tr>
+                              <td style="padding:14px 18px;background-color:#1a1a1a;">
+                                <p style="margin:0;font-size:11px;color:#666666;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Empresa</p>
+                                <p style="margin:4px 0 0;font-size:15px;color:#ffffff;font-weight:500;">${company}</p>
+                              </td>
+                            </tr>` : ''}
+                            <tr>
+                              <td style="padding:14px 18px;background-color:#1a1a1a;border-radius:0 0 10px 10px;">
+                                <p style="margin:0;font-size:11px;color:#666666;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Mensaje</p>
+                                <p style="margin:4px 0 0;font-size:14px;color:#cccccc;line-height:1.7;">${message}</p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center" style="padding-top:24px;border-top:1px solid rgba(255,255,255,0.05);">
+                          <p style="margin:0;font-size:12px;color:#555555;">
+                            &copy; 2026 AdaptaWeb &middot; <a href="https://adaptaweb.cl" style="color:#45FF8C;text-decoration:none;">adaptaweb.cl</a>
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </body>
+            </html>
           `,
         });
       } catch (emailErr) {
