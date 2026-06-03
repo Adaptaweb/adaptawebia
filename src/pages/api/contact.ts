@@ -60,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
       try {
         const resend = new Resend(resendApiKey);
         await resend.emails.send({
-          from: 'contacto@adaptaweb.cl',
+          from: 'noreply@adaptaweb.cl',
           to: 'hola@adaptaweb.cl',
           subject: `Nuevo contacto de ${name}`,
           html: `
