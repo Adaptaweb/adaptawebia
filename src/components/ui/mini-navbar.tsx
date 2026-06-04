@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 
-const AnimatedNavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
+const AnimatedNavLink = ({ href, children, isActive }: { href: string; children: React.ReactNode; isActive?: boolean }) => {
   return (
     <a
       href={href}
       className="group relative inline-block overflow-hidden h-5 flex items-center text-sm"
     >
       <div className="flex flex-col transition-transform duration-300 ease-out transform group-hover:-translate-y-1/2">
-        <span className="text-text-muted">{children}</span>
-        <span className="text-text-primary">{children}</span>
+        <span className={isActive ? 'text-primary' : 'text-text-muted'}>{children}</span>
+        <span className={isActive ? 'text-primary' : 'text-text-primary'}>{children}</span>
       </div>
     </a>
   );
@@ -18,6 +18,7 @@ const AnimatedNavLink = ({ href, children }: { href: string; children: React.Rea
 
 export function MiniNavbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('#hero');
   const [headerShapeClass, setHeaderShapeClass] = useState('rounded-full');
   const shapeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -45,6 +46,31 @@ export function MiniNavbar() {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 100;
+      let current = '#hero';
+      let closest = Infinity;
+
+      ['hero', 'servicios', 'proyectos', 'skills'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          const diff = Math.abs(el.offsetTop - scrollPos);
+          if (diff < closest) {
+            closest = diff;
+            current = `#${id}`;
+          }
+        }
+      });
+
+      setActiveSection(current);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const navLinksData = [
     { label: 'Servicios', href: '#servicios' },
     { label: 'Proyectos', href: '#proyectos' },
@@ -63,20 +89,20 @@ export function MiniNavbar() {
                   transition-[border-radius] duration-0 ease-in-out`}
     >
       <div className="flex items-center justify-between w-full gap-x-6 sm:gap-x-8">
-        <a href="/" className="flex items-center gap-2.5 group">
+        <div className="flex items-center gap-2.5 select-none">
           <img
             src="/logo.webp"
             alt="AdaptaWeb"
-            className="h-7 w-auto group-hover:opacity-80 transition-opacity"
+            className="h-7 w-auto"
           />
           <span className="font-semibold text-sm tracking-tight text-text-primary">
             ADAPTAWEB
           </span>
-        </a>
+        </div>
 
         <nav className="hidden sm:flex items-center space-x-4 sm:space-x-6">
           {navLinksData.map((link) => (
-            <AnimatedNavLink key={link.href} href={link.href}>
+            <AnimatedNavLink key={link.href} href={link.href} isActive={activeSection === link.href}>
               {link.label}
             </AnimatedNavLink>
           ))}
@@ -117,7 +143,7 @@ export function MiniNavbar() {
             <a
               key={link.href}
               href={link.href}
-              className="text-text-muted hover:text-text-primary transition-colors w-full text-center"
+              className={`transition-colors w-full text-center ${activeSection === link.href ? 'text-primary' : 'text-text-muted hover:text-text-primary'}`}
               onClick={() => setIsOpen(false)}
             >
               {link.label}
