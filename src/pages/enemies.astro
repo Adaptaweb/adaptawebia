@@ -1,0 +1,278 @@
+---
+// Hidden landing page — not linked from anywhere in the site navigation.
+// Single purpose: download the Enemies: Protocolo Cero launcher.
+const DOWNLOAD_URL = "https://adaptaweb.cl/enemiesland_launcher.exe";
+
+// Keep the page out of search engines.
+Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enemies: Protocolo Cero — Launcher</title>
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="theme-color" content="#0B0F0A" />
+    <link rel="icon" href="/enemies/icon.png" />
+    <link rel="preload" as="image" href="/enemies/logo.jpeg" />
+    <style is:global>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background-color: #0b0f0a;
+      }
+
+      body {
+        font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+        color: #e8f3e2;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      ::selection {
+        background-color: #7ac943;
+        color: #0b0f0a;
+      }
+
+      .bg-video {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        filter: saturate(1.05) contrast(1.05) brightness(0.55);
+      }
+
+      .bg-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        background:
+          radial-gradient(
+             circle at 50% 35%,
+            rgba(122, 201, 67, 0.14),
+            transparent 55%
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(11, 15, 10, 0.82) 0%,
+            rgba(11, 15, 10, 0.62) 35%,
+            rgba(11, 15, 10, 0.92) 100%
+          );
+      }
+
+      /* Subtle scanline/grain texture for the post-apocalyptic feel. */
+      .bg-scanlines {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0.25;
+        background-image: repeating-linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.35) 0px,
+          rgba(0, 0, 0, 0.35) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      }
+
+      .shell {
+        position: relative;
+        z-index: 3;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        padding: 3rem 1.25rem 2.5rem;
+        text-align: center;
+      }
+
+      .logo {
+        width: min(680px, 92vw);
+        height: auto;
+        display: block;
+        border-radius: 14px;
+        border: 1px solid rgba(122, 201, 67, 0.28);
+        box-shadow:
+          0 0 0 1px rgba(0, 0, 0, 0.6),
+          0 24px 70px rgba(0, 0, 0, 0.75),
+          0 0 90px rgba(122, 201, 67, 0.12);
+        animation: fade-up 0.9s ease-out both;
+      }
+
+      .tagline {
+        margin: 0;
+        max-width: 46ch;
+        font-size: clamp(0.95rem, 2.4vw, 1.15rem);
+        line-height: 1.6;
+        color: #b6c9ad;
+        animation: fade-up 0.9s ease-out 0.12s both;
+      }
+
+      .download {
+        --glow: rgba(122, 201, 67, 0.45);
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 1.15rem 2.6rem;
+        border: 2px solid #7ac943;
+        border-radius: 10px;
+        background: linear-gradient(180deg, #7ac943 0%, #4e8f28 100%);
+        color: #08120a;
+        font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow:
+          0 0 26px var(--glow),
+          0 10px 30px rgba(0, 0, 0, 0.55),
+          inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease,
+          filter 0.18s ease;
+        animation:
+          fade-up 0.9s ease-out 0.24s both,
+          pulse-glow 3s ease-in-out 1.2s infinite;
+      }
+
+      .download:hover,
+      .download:focus-visible {
+        transform: translateY(-3px);
+        filter: brightness(1.08);
+        box-shadow:
+          0 0 44px var(--glow),
+          0 16px 40px rgba(0, 0, 0, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      }
+
+      .download:focus-visible {
+        outline: 3px solid #e8f3e2;
+        outline-offset: 4px;
+      }
+
+      .download:active {
+        transform: translateY(0);
+      }
+
+      .download svg {
+        flex: none;
+      }
+
+      .meta {
+        margin: 0;
+        font-size: 0.8rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #7f9276;
+        animation: fade-up 0.9s ease-out 0.36s both;
+      }
+
+      @keyframes fade-up {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse-glow {
+        0%,
+        100% {
+          box-shadow:
+            0 0 26px var(--glow),
+            0 10px 30px rgba(0, 0, 0, 0.55),
+            inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        }
+        50% {
+          box-shadow:
+            0 0 46px var(--glow),
+            0 10px 30px rgba(0, 0, 0, 0.55),
+            inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .logo,
+        .tagline,
+        .download,
+        .meta {
+          animation: none;
+        }
+        .download {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <video
+      class="bg-video"
+      src="/enemies/intro.mp4"
+      poster="/enemies/logo.jpeg"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      aria-hidden="true"></video>
+    <div class="bg-overlay" aria-hidden="true"></div>
+    <div class="bg-scanlines" aria-hidden="true"></div>
+
+    <main class="shell">
+      <img
+        class="logo"
+        src="/enemies/logo.jpeg"
+        alt="Enemies: Protocolo Cero"
+        width="1406"
+        height="768"
+        fetchpriority="high"
+      />
+
+      <p class="tagline">
+        Descarga el launcher oficial e inicia sesión para entrar al servidor.
+      </p>
+
+      <a class="download" href={DOWNLOAD_URL} download>
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="square"
+          stroke-linejoin="miter"
+          aria-hidden="true"
+        >
+          <path d="M12 3v12" />
+          <path d="M6 11l6 6 6-6" />
+          <path d="M4 21h16" />
+        </svg>
+        Descargar Launcher
+      </a>
+
+      <p class="meta">Windows · .exe</p>
+    </main>
+  </body>
+</html>
