@@ -1,10 +1,17 @@
 ---
+import { getLauncherRelease } from "../lib/launcher-release";
+
 // Hidden landing page — not linked from anywhere in the site navigation.
 // Single purpose: download the Enemies: Protocolo Cero launcher.
-const DOWNLOAD_URL = "https://mods.adaptaweb.cl/enemiesland_launcher.exe";
+
+// The button points at our own redirect, which resolves the current build
+// from the release manifest; this read is only for the version label.
+const DOWNLOAD_URL = "/enemies/download";
+const release = await getLauncherRelease();
 
 // Keep the page out of search engines.
 Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
+Astro.response.headers.set("Cache-Control", "public, max-age=300");
 ---
 
 <!doctype html>
@@ -436,7 +443,9 @@ Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
         Descargar Launcher
       </a>
 
-      <p class="meta">Windows · .exe</p>
+      <p class="meta">
+        {release.version && <>v{release.version} · </>}Windows · .exe
+      </p>
     </main>
 
     <script>
