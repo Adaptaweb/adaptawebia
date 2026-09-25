@@ -1,13 +1,13 @@
 ---
-import { ENEMIES_LAUNCHER, getLauncherRelease } from "../lib/launcher-release";
+import { RPG_LAUNCHER, getLauncherRelease } from "../lib/launcher-release";
 
 // Hidden landing page — not linked from anywhere in the site navigation.
-// Single purpose: download the Enemies: Protocolo Cero launcher.
+// Single purpose: download the KEO RPG launcher.
 
 // The button points at our own redirect, which resolves the current build
 // from the release manifest; this read is only for the version label.
-const DOWNLOAD_URL = "/enemies/download";
-const release = await getLauncherRelease(ENEMIES_LAUNCHER);
+const DOWNLOAD_URL = "/rpg/download";
+const release = await getLauncherRelease(RPG_LAUNCHER);
 
 // Keep the page out of search engines.
 Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
@@ -19,11 +19,11 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Enemies: Protocolo Cero — Launcher</title>
+    <title>KEO RPG — Launcher</title>
     <meta name="robots" content="noindex, nofollow, noarchive" />
-    <meta name="theme-color" content="#0B0F0A" />
-    <link rel="icon" href="/enemies/icon.png" />
-    <link rel="preload" as="image" href="/enemies/launcher.webp" />
+    <meta name="theme-color" content="#0B0810" />
+    <link rel="icon" href="/rpg/icon.png" />
+    <link rel="preload" as="image" href="/rpg/launcher.webp" />
     <style is:global>
       *,
       *::before,
@@ -36,58 +36,48 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
         margin: 0;
         padding: 0;
         min-height: 100%;
-        background-color: #0b0f0a;
+        background-color: #0b0810;
       }
 
       body {
         font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
-        color: #e8f3e2;
+        color: #ece3f5;
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
       }
 
       ::selection {
-        background-color: #7ac943;
-        color: #0b0f0a;
+        background-color: #d9a93f;
+        color: #1a1027;
       }
 
       /* ---------- fixed background ---------- */
 
-      .bg-video {
+      .bg-glow {
         position: fixed;
         inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
         z-index: 0;
-        filter: saturate(1.05) contrast(1.05) brightness(0.5);
-      }
-
-      .bg-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 1;
         background:
           radial-gradient(
-            circle at 50% 30%,
-            rgba(122, 201, 67, 0.14),
-            transparent 55%
+            80% 60% at 50% 12%,
+            rgba(142, 98, 201, 0.35),
+            transparent 60%
           ),
-          linear-gradient(
-            to bottom,
-            rgba(11, 15, 10, 0.84) 0%,
-            rgba(11, 15, 10, 0.66) 35%,
-            rgba(11, 15, 10, 0.94) 100%
-          );
+          radial-gradient(
+            70% 50% at 50% 100%,
+            rgba(217, 169, 63, 0.12),
+            transparent 65%
+          ),
+          linear-gradient(180deg, #2a1a44 0%, #170f24 45%, #0b0810 100%);
       }
 
-      /* Subtle scanline texture for the post-apocalyptic feel. */
+      /* Subtle scanline texture, same treatment as the launcher's veil. */
       .bg-scanlines {
         position: fixed;
         inset: 0;
-        z-index: 2;
+        z-index: 1;
         pointer-events: none;
-        opacity: 0.25;
+        opacity: 0.22;
         background-image: repeating-linear-gradient(
           to bottom,
           rgba(0, 0, 0, 0.35) 0px,
@@ -95,11 +85,6 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
           transparent 1px,
           transparent 3px
         );
-      }
-
-      .page {
-        position: relative;
-        z-index: 3;
       }
 
       /* ---------- server status pill ---------- */
@@ -113,12 +98,12 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
         align-items: center;
         gap: 0.55rem;
         padding: 0.5rem 1rem;
-        border: 1px solid rgba(122, 201, 67, 0.28);
+        border: 1px solid rgba(217, 169, 63, 0.3);
         border-radius: 999px;
-        background: rgba(11, 15, 10, 0.72);
+        background: rgba(11, 8, 16, 0.72);
         backdrop-filter: blur(6px);
         font-size: 0.82rem;
-        color: #cfe0c6;
+        color: #e4d6ef;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
         animation: fade-up 0.6s ease-out both;
       }
@@ -132,8 +117,8 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
         height: 8px;
         flex: none;
         border-radius: 50%;
-        background: #7ac943;
-        box-shadow: 0 0 0 0 rgba(122, 201, 67, 0.55);
+        background: #8ec63f;
+        box-shadow: 0 0 0 0 rgba(142, 198, 63, 0.55);
         animation: ping 2.4s ease-out infinite;
       }
 
@@ -149,15 +134,20 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
 
       @media (max-width: 560px) {
         .server-status {
-          top: 0.75rem;
+          top: 0.5rem;
           right: 50%;
           transform: translateX(50%);
           font-size: 0.76rem;
         }
 
-        /* Centred at the top, so the content has to start below it. */
+        /* Centred at the top, so the content has to start below it. The
+           screenshot gives back the height that clearance costs. */
         .page {
-          padding-top: 3.25rem;
+          padding-top: 3.9rem;
+        }
+
+        .shot-frame {
+          width: min(820px, 86vw, calc((100svh - 415px) * 1.54));
         }
       }
 
@@ -181,7 +171,7 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
         font-size: 0.72rem;
         letter-spacing: 0.28em;
         text-transform: uppercase;
-        color: #7ac943;
+        color: #f3d58a;
         animation: fade-up 0.8s ease-out both;
       }
 
@@ -198,24 +188,24 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
         max-width: 54ch;
         font-size: clamp(0.92rem, 2.2vw, 1.05rem);
         line-height: 1.6;
-        color: #b6c9ad;
+        color: #bdaecd;
         animation: fade-up 0.8s ease-out 0.16s both;
       }
 
       /* ---------- download button ---------- */
 
       .download {
-        --glow: rgba(122, 201, 67, 0.45);
+        --glow: rgba(217, 169, 63, 0.4);
         position: relative;
         display: inline-flex;
         align-items: center;
         gap: 0.85rem;
         margin-top: 0.35rem;
         padding: 1.1rem 2.5rem;
-        border: 2px solid #7ac943;
+        border: 2px solid #f3d58a;
         border-radius: 10px;
-        background: linear-gradient(180deg, #7ac943 0%, #4e8f28 100%);
-        color: #08120a;
+        background: linear-gradient(180deg, #f3d58a 0%, #c9992c 100%);
+        color: #241605;
         font-size: clamp(1.05rem, 2.6vw, 1.3rem);
         font-weight: 800;
         letter-spacing: 0.09em;
@@ -226,7 +216,7 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
         box-shadow:
           0 0 26px var(--glow),
           0 10px 30px rgba(0, 0, 0, 0.55),
-          inset 0 1px 0 rgba(255, 255, 255, 0.35);
+          inset 0 1px 0 rgba(255, 255, 255, 0.45);
         transition:
           transform 0.18s ease,
           box-shadow 0.18s ease,
@@ -262,11 +252,11 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
         box-shadow:
           0 0 44px var(--glow),
           0 16px 40px rgba(0, 0, 0, 0.6),
-          inset 0 1px 0 rgba(255, 255, 255, 0.45);
+          inset 0 1px 0 rgba(255, 255, 255, 0.55);
       }
 
       .download:focus-visible {
-        outline: 3px solid #e8f3e2;
+        outline: 3px solid #ece3f5;
         outline-offset: 4px;
       }
 
@@ -284,29 +274,28 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
         font-size: 0.78rem;
         letter-spacing: 0.14em;
         text-transform: uppercase;
-        color: #7f9276;
+        color: #8e7ba3;
         animation: fade-up 0.8s ease-out 0.64s both;
       }
 
       /* ---------- screenshot ---------- */
 
-
       .shot-frame {
         position: relative;
-        width: min(820px, 92vw, calc((100svh - 385px) * 1.62));
+        width: min(820px, 92vw, calc((100svh - 415px) * 1.54));
         min-width: 260px;
         margin: 0.15rem 0 0.25rem;
         border-radius: 12px;
         padding: 6px;
         background: linear-gradient(
           160deg,
-          rgba(122, 201, 67, 0.35),
-          rgba(122, 201, 67, 0.05) 45%,
-          rgba(255, 69, 0, 0.22)
+          rgba(243, 213, 138, 0.35),
+          rgba(142, 98, 201, 0.18) 45%,
+          rgba(107, 63, 160, 0.3)
         );
         box-shadow:
           0 30px 80px rgba(0, 0, 0, 0.7),
-          0 0 70px rgba(122, 201, 67, 0.1);
+          0 0 70px rgba(107, 63, 160, 0.18);
         perspective: 1200px;
         transform-style: preserve-3d;
         will-change: transform;
@@ -340,6 +329,8 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
         opacity: 1;
       }
 
+      /* ---------- feature chips ---------- */
+
       .features {
         list-style: none;
         margin: 0;
@@ -352,11 +343,11 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
 
       .features li {
         padding: 0.45rem 0.95rem;
-        border: 1px solid rgba(122, 201, 67, 0.25);
+        border: 1px solid rgba(142, 98, 201, 0.35);
         border-radius: 999px;
-        background: rgba(11, 15, 10, 0.55);
+        background: rgba(11, 8, 16, 0.55);
         font-size: 0.8rem;
-        color: #b6c9ad;
+        color: #bdaecd;
         animation: fade-up 0.7s ease-out both;
       }
 
@@ -392,13 +383,13 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
           box-shadow:
             0 0 26px var(--glow),
             0 10px 30px rgba(0, 0, 0, 0.55),
-            inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            inset 0 1px 0 rgba(255, 255, 255, 0.45);
         }
         50% {
           box-shadow:
             0 0 46px var(--glow),
             0 10px 30px rgba(0, 0, 0, 0.55),
-            inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            inset 0 1px 0 rgba(255, 255, 255, 0.45);
         }
       }
 
@@ -415,11 +406,11 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
 
       @keyframes ping {
         0% {
-          box-shadow: 0 0 0 0 rgba(122, 201, 67, 0.55);
+          box-shadow: 0 0 0 0 rgba(142, 198, 63, 0.55);
         }
         70%,
         100% {
-          box-shadow: 0 0 0 7px rgba(122, 201, 67, 0);
+          box-shadow: 0 0 0 7px rgba(142, 198, 63, 0);
         }
       }
 
@@ -455,17 +446,7 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
     </style>
   </head>
   <body>
-    <video
-      class="bg-video"
-      src="/enemies/intro.mp4"
-      poster="/enemies/logo.jpeg"
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="auto"
-      aria-hidden="true"></video>
-    <div class="bg-overlay" aria-hidden="true"></div>
+    <div class="bg-glow" aria-hidden="true"></div>
     <div class="bg-scanlines" aria-hidden="true"></div>
 
     <div class="server-status" id="server-status" hidden>
@@ -474,19 +455,20 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
     </div>
 
     <main class="page">
-      <p class="eyebrow">Enemies · Protocolo Cero</p>
+      <p class="eyebrow">KEO RPG · Optimized</p>
       <h1>Un solo botón: JUGAR</h1>
       <p class="tagline">
-        Instala Java, Forge, los mods del servidor, el tema visual y los
-        shaders. Inicias sesión y entras directo a la partida.
+        Más de 200 mods en español: clases RPG, magia y 37 jefes. El launcher
+        instala Java, NeoForge y el modpack completo, y te conecta directo al
+        servidor.
       </p>
 
       <div class="shot-frame" id="shot">
         <img
-          src="/enemies/launcher.webp"
-          alt="Ventana del launcher de EnemiesLand: estado del servidor, cuenta de Microsoft conectada, instalación completa de Java, Forge, mods, tema visual y shaders, y el botón JUGAR"
+          src="/rpg/launcher.webp"
+          alt="Ventana del launcher de KEO RPG: estado del servidor, cuenta de Microsoft conectada, instalación completa de Java, NeoForge, mods, tema visual y shaders, y el botón JUGAR"
           width="1620"
-          height="1000"
+          height="1049"
           fetchpriority="high"
           decoding="async"
         />
@@ -495,8 +477,8 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
 
       <ul class="features">
         <li>Instala Java automáticamente</li>
-        <li>Forge 1.20.1</li>
-        <li>Mods y shaders</li>
+        <li>NeoForge 1.21.1</li>
+        <li>+200 mods en español</li>
         <li>Login con Microsoft</li>
       </ul>
 
@@ -532,7 +514,7 @@ Astro.response.headers.set("Cache-Control", "public, max-age=300");
       async function refreshServerStatus() {
         if (!statusPill || !statusText) return;
         try {
-          const response = await fetch("/enemies/status.json", {
+          const response = await fetch("/rpg/status.json", {
             signal: AbortSignal.timeout(6000),
           });
           if (!response.ok) throw new Error(String(response.status));

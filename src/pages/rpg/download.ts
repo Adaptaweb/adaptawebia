@@ -1,12 +1,12 @@
 import type { APIRoute } from 'astro';
-import { ENEMIES_LAUNCHER, getLauncherRelease } from '../../lib/launcher-release';
+import { RPG_LAUNCHER, getLauncherRelease } from '../../lib/launcher-release';
 
 /**
  * Stable download link for the launcher: redirects to whatever build the
  * release manifest currently points at.
  */
 export const GET: APIRoute = async () => {
-  const release = await getLauncherRelease(ENEMIES_LAUNCHER);
+  const release = await getLauncherRelease(RPG_LAUNCHER);
 
   return new Response(null, {
     status: 302,

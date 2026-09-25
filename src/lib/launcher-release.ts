@@ -1,18 +1,30 @@
 /**
- * Resolves the current EnemiesLand launcher build from the manifest that
- * electron-builder publishes next to the installer, so the download link
- * follows new releases without a code change.
+ * Resolves the current launcher build from the manifest that electron-builder
+ * publishes next to the installer, so download links follow new releases
+ * without a code change.
  */
 
-const BASE_URL = 'https://mods.adaptaweb.cl/launcher';
-const MANIFEST_URL = `${BASE_URL}/latest.yml`;
+export interface LauncherSource {
+  /** Directory the installer and its latest.yml live in, without a trailing slash. */
+  baseUrl: string;
+  /** Used when the manifest is unreachable or malformed. */
+  fallback: { version: string; fileName: string };
+}
 
-/** Used when the manifest is unreachable or malformed. */
-const FALLBACK: LauncherRelease = {
-  version: '1.0.1',
-  fileName: 'EnemiesLand Launcher Setup 1.0.1.exe',
-  url: `${BASE_URL}/EnemiesLand%20Launcher%20Setup%201.0.1.exe`,
-  stale: true,
+export const ENEMIES_LAUNCHER: LauncherSource = {
+  baseUrl: 'https://mods.adaptaweb.cl/launcher',
+  fallback: {
+    version: '1.0.1',
+    fileName: 'EnemiesLand Launcher Setup 1.0.1.exe',
+  },
+};
+
+export const RPG_LAUNCHER: LauncherSource = {
+  baseUrl: 'https://mods.adaptaweb.cl/keo/launcher',
+  fallback: {
+    version: '1.0.0',
+    fileName: 'KEO-RPG-Launcher-Setup-1.0.0.exe',
+  },
 };
 
 export interface LauncherRelease {
@@ -38,25 +50,34 @@ function isSafeFileName(name: string): boolean {
   return /^[A-Za-z0-9 ._()+-]+\.exe$/i.test(name) && !name.includes('..');
 }
 
-export async function getLauncherRelease(): Promise<LauncherRelease> {
+export async function getLauncherRelease(
+  source: LauncherSource,
+): Promise<LauncherRelease> {
+  const fallback: LauncherRelease = {
+    version: source.fallback.version,
+    fileName: source.fallback.fileName,
+    url: `${source.baseUrl}/${encodeURIComponent(source.fallback.fileName)}`,
+    stale: true,
+  };
+
   try {
-    const response = await fetch(MANIFEST_URL, {
+    const response = await fetch(`${source.baseUrl}/latest.yml`, {
       signal: AbortSignal.timeout(4000),
       headers: { accept: 'text/yaml, text/plain' },
     });
-    if (!response.ok) return FALLBACK;
+    if (!response.ok) return fallback;
 
     const manifest = await response.text();
     const fileName = readField(manifest, 'path');
-    if (!fileName || !isSafeFileName(fileName)) return FALLBACK;
+    if (!fileName || !isSafeFileName(fileName)) return fallback;
 
     return {
       version: readField(manifest, 'version'),
       fileName,
-      url: `${BASE_URL}/${encodeURIComponent(fileName)}`,
+      url: `${source.baseUrl}/${encodeURIComponent(fileName)}`,
       stale: false,
     };
   } catch {
-    return FALLBACK;
+    return fallback;
   }
 }
