@@ -354,3 +354,36 @@ html {
   .aw-knob, .aw-track, .aw-fade-a, .aw-fade-b, .aw-roll, .aw-toast { animation: none !important; }
   .aw-typing { opacity: 0; }
 }
+
+/* ---------- Aplicaciones: lista que avanza sola + carrusel 3D ---------- */
+
+@keyframes aw-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.aw-app-item .aw-app-name,
+.aw-app-item .aw-app-num { transition: color .35s; }
+.aw-app-item:hover .aw-app-name { color: #D2D2D7; }
+.aw-app-item.is-on .aw-app-name { color: #F5F5F7; }
+.aw-app-item.is-on .aw-app-num { color: #45FF8C; }
+.aw-app-item .aw-app-detail { max-height: 0; opacity: 0; overflow: hidden; transition: max-height .6s cubic-bezier(.2,.8,.2,1), opacity .5s; }
+.aw-app-item.is-on .aw-app-detail { max-height: 240px; opacity: 1; }
+.aw-app-item .aw-app-bar { transform-origin: left center; transform: scaleX(0); }
+.aw-app-item.is-on .aw-app-bar { animation: aw-grow 6s linear forwards; }
+.aw-apps-paused .aw-app-item.is-on .aw-app-bar { animation-play-state: paused; }
+
+.aw-card { transition: transform 1s cubic-bezier(.2,.8,.2,1), opacity 1s, filter 1s, box-shadow .5s, border-color .5s; }
+.aw-card.is-front { animation: aw-float 7s ease-in-out infinite; }
+.aw-card.is-front:hover {
+  border-color: rgba(69,255,140,0.4);
+  box-shadow: 0 60px 120px -30px rgba(0,0,0,0.95), 0 0 70px -20px rgba(69,255,140,0.5);
+}
+.aw-card.is-side:hover { filter: brightness(.8) !important; }
+.aw-card .aw-dev { transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+.aw-card.is-front:hover .aw-dev-a { transform: translateY(-10px); }
+.aw-card.is-front:hover .aw-dev-b { transform: translateY(-16px) rotate(-2deg); }
+.aw-card.is-front:hover .aw-dev-c { transform: translateY(-14px) rotate(2deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .aw-app-item.is-on .aw-app-bar { animation: none; transform: scaleX(1); }
+  .aw-card.is-front { animation: none; }
+  .aw-card, .aw-card .aw-dev, .aw-app-item .aw-app-detail { transition: none; }
+}
