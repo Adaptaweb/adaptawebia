@@ -144,6 +144,8 @@ function AppCard({ app, phase }: { app: AppItem; phase: Phase }) {
                 playing ? "opacity-100" : "opacity-0"
               )}
               onPlaying={() => setPlaying(true)}
+              onPause={() => setPlaying(false)}
+              onEmptied={() => setPlaying(false)}
               onEnded={onEnded}
               muted
               loop={single}
@@ -181,6 +183,8 @@ function AppCard({ app, phase }: { app: AppItem; phase: Phase }) {
                   playing ? "opacity-100" : "opacity-0"
                 )}
                 onPlaying={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onEmptied={() => setPlaying(false)}
                 onEnded={onEnded}
                 muted
                 loop={single}
