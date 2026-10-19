@@ -68,10 +68,11 @@ export default function ServiciosSection() {
         >
           <div className="mb-16 text-center" data-reveal>
             
-            <h2 className="mx-auto max-w-xl text-3xl font-bold tracking-tighter text-white md:text-4xl lg:text-5xl">
+            <p className="mb-4 text-[17px] font-semibold text-primary">Servicios</p>
+            <h2 className="mx-auto max-w-[820px] text-[clamp(38px,4.6vw,64px)] font-bold leading-[1.06] tracking-[-0.04em] text-white">
               Soluciones tecnológicas integrales
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-white/80 md:text-base">
+            <p className="mx-auto mt-4 max-w-[620px] text-base leading-relaxed text-text-muted md:text-lg">
           Todo lo que necesitas para llevar tu negocio al siguiente nivel. Muchas organizaciones operan con herramientas que no fueron diseñadas para su realidad.
             </p>
           </div>

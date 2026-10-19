@@ -2,12 +2,12 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Navigation from "../components/Navigation.astro";
 import ThreeBackground from "../components/ThreeBackground.astro";
-import HeroContact from "../components/HeroContact.astro";
+import HeroSection from "../components/HeroSection";
 import Servicios from "../components/Servicios.astro";
+import AplicacionesSection from "../components/AplicacionesSection";
 import SkillsSection from "../components/SkillsSection.astro";
-import ProyectosWrapper from "../components/ProyectosWrapper.astro";
+import ContactSection from "../components/ContactSection";
 import FooterWrapper from "../components/FooterWrapper.astro";
-import { SeparatorPro } from "../components/ui/seperatorpro";
 ---
 
 <BaseLayout
@@ -16,24 +16,21 @@ import { SeparatorPro } from "../components/ui/seperatorpro";
 >
   <ThreeBackground />
   <Navigation />
-  <main class="relative z-10">
-    <HeroContact />
-    <SeparatorPro variant="default" client:load />
+  <main class="relative z-10 overflow-x-clip">
+    <HeroSection client:load />
     <Servicios />
-    <SeparatorPro variant="default" client:load />
-    <ProyectosWrapper />
-    <SeparatorPro variant="default" client:load />
+    <AplicacionesSection client:visible />
     <SkillsSection />
-    <SeparatorPro variant="default" client:load />
+    <ContactSection client:load />
   </main>
   <FooterWrapper />
 </BaseLayout>
 
 <script>
-import { initHeroReveal, initScrollReveal } from "../scripts/scroll-reveal";
+import { initParallax, initScrollReveal } from "../scripts/scroll-reveal";
 
 document.addEventListener("DOMContentLoaded", () => {
-  initHeroReveal();
   initScrollReveal();
+  initParallax();
 });
 </script>

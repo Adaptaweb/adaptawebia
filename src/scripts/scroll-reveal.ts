@@ -3,9 +3,18 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** Punto de partida de cada variante de `data-reveal`: sube por defecto, o entra por un lado, o crece. */
+const REVEAL_FROM: Record<string, gsap.TweenVars> = {
+  left: { x: -80, opacity: 0 },
+  right: { x: 80, opacity: 0 },
+  zoom: { scale: 0.85, opacity: 0 },
+};
+
 export function initScrollReveal() {
-  const els = document.querySelectorAll("[data-reveal]");
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const els = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  if (reducedMotion()) {
     els.forEach((el) => {
       el.style.opacity = "1";
       el.style.transform = "none";
@@ -14,45 +23,36 @@ export function initScrollReveal() {
   }
 
   els.forEach((el) => {
-    gsap.fromTo(
-      el,
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 85%",
-          once: true,
-        },
-      }
-    );
+    const from = REVEAL_FROM[el.dataset.reveal ?? ""] ?? { y: 40, opacity: 0 };
+    gsap.fromTo(el, from, {
+      x: 0,
+      y: 0,
+      scale: 1,
+      opacity: 1,
+      duration: 0.9,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: el,
+        start: "top 85%",
+        once: true,
+      },
+    });
   });
 }
 
-export function initHeroReveal() {
-  const heroEls = document.querySelectorAll("#hero [data-reveal]");
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    heroEls.forEach((el) => {
-      el.style.opacity = "1";
-      el.style.transform = "none";
+/** Desplaza en vertical los elementos con `data-parallax="<px>"` mientras su sección sale de pantalla. */
+export function initParallax() {
+  if (reducedMotion()) return;
+  document.querySelectorAll<HTMLElement>("[data-parallax]").forEach((el) => {
+    gsap.to(el, {
+      y: parseFloat(el.dataset.parallax ?? "0"),
+      ease: "none",
+      scrollTrigger: {
+        trigger: el.closest("section") ?? el,
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+      },
     });
-    return;
-  }
-
-  heroEls.forEach((el, i) => {
-    gsap.fromTo(
-      el,
-      { y: 30, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.7,
-        delay: i * 0.15 + 0.2,
-        ease: "power3.out",
-      }
-    );
   });
 }

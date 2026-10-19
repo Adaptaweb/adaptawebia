@@ -10,7 +10,8 @@ function LogoImage({ logo }: { logo: Logo }) {
   return (
     <img
       alt={logo.alt}
-      className="select-none h-4 md:h-5"
+      // Todos en blanco para que se lean igual sobre el fondo oscuro; al pasar el cursor recuperan su color.
+      className="h-5 select-none opacity-70 brightness-0 invert transition duration-300 hover:opacity-100 hover:brightness-100 hover:invert-0 md:h-6"
       loading="lazy"
       src={logo.src}
     />

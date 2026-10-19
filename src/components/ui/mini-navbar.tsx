@@ -1,163 +1,148 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
-const AnimatedNavLink = ({ href, children, isActive }: { href: string; children: React.ReactNode; isActive?: boolean }) => {
-  return (
-    <a
-      href={href}
-      className="group relative inline-block overflow-hidden h-5 flex items-center text-sm"
-    >
-      <div className="flex flex-col transition-transform duration-300 ease-out transform group-hover:-translate-y-1/2">
-        <span className={isActive ? 'text-primary' : 'text-text-muted'}>{children}</span>
-        <span className={isActive ? 'text-primary' : 'text-text-primary'}>{children}</span>
-      </div>
-    </a>
-  );
-};
+const NAV_LINKS = [
+  { id: 'hero', label: 'Inicio' },
+  { id: 'servicios', label: 'Servicios' },
+  { id: 'aplicaciones', label: 'Aplicaciones' },
+  { id: 'tecnologias', label: 'Tecnologías' },
+];
+
+/** Secciones de abajo hacia arriba: la primera cuyo borde superior pasó el 45 % de la pantalla es la activa. */
+const SPY_ORDER = ['contacto', 'tecnologias', 'aplicaciones', 'servicios'];
 
 export function MiniNavbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('#hero');
-  const [headerShapeClass, setHeaderShapeClass] = useState('rounded-full');
-  const shapeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  const [active, setActive] = useState('hero');
+  const [compact, setCompact] = useState(false);
 
   useEffect(() => {
-    if (shapeTimeoutRef.current) {
-      clearTimeout(shapeTimeoutRef.current);
-    }
-
-    if (isOpen) {
-      setHeaderShapeClass('rounded-xl');
-    } else {
-      shapeTimeoutRef.current = setTimeout(() => {
-        setHeaderShapeClass('rounded-full');
-      }, 300);
-    }
-
-    return () => {
-      if (shapeTimeoutRef.current) {
-        clearTimeout(shapeTimeoutRef.current);
-      }
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + 100;
-      let current = '#hero';
-      let closest = Infinity;
-
-      ['hero', 'servicios', 'proyectos', 'skills'].forEach((id) => {
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      let current = 'hero';
+      for (const id of SPY_ORDER) {
         const el = document.getElementById(id);
-        if (el) {
-          const diff = Math.abs(el.offsetTop - scrollPos);
-          if (diff < closest) {
-            closest = diff;
-            current = `#${id}`;
-          }
+        if (el && el.getBoundingClientRect().top < window.innerHeight * 0.45) {
+          current = id;
+          break;
         }
-      });
-
-      setActiveSection(current);
+      }
+      setActive(current);
+      setCompact(window.scrollY > 40);
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navLinksData = [
-    { label: 'Servicios', href: '#servicios' },
-    { label: 'Proyectos', href: '#proyectos' },
-    { label: 'Tecnologías', href: '#skills' },
-    
-  ];
-
   return (
-    <header
-      className={`fixed top-6 left-1/2 -translate-x-1/2 z-50
-                  flex flex-col items-center
-                  px-6 py-3 backdrop-blur-sm
-                  ${headerShapeClass}
-                  border border-border bg-surface/60
-                  w-[calc(100%-2rem)] sm:w-auto
-                  transition-[border-radius] duration-0 ease-in-out`}
-    >
-      <div className="flex items-center justify-between w-full gap-x-6 sm:gap-x-8">
-        <div className="flex items-center gap-2.5 select-none">
-          <img
-            src="/logo.webp"
-            alt="AdaptaWeb"
-            className="h-7 w-auto"
-          />
-          <span className="font-semibold text-sm tracking-tight text-text-primary">
-            ADAPTAWEB
-          </span>
-        </div>
-
-        <nav className="hidden sm:flex items-center space-x-4 sm:space-x-6">
-          {navLinksData.map((link) => (
-            <AnimatedNavLink key={link.href} href={link.href} isActive={activeSection === link.href}>
-              {link.label}
-            </AnimatedNavLink>
-          ))}
-        </nav>
-
-        <div className="hidden sm:flex items-center gap-3">
-          <a
-            href="#hero"
-            className="relative group px-4 py-2 text-xs sm:text-sm font-semibold text-black bg-gradient-to-br from-primary to-primary/80 rounded-full hover:from-primary/90 hover:to-primary/70 transition-all duration-200"
-          >
-            Contacto
-          </a>
-        </div>
-
-        <button
-          className="sm:hidden flex items-center justify-center w-8 h-8 text-text-muted focus:outline-none"
-          onClick={toggleMenu}
-          aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
-        >
-          {isOpen ? (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
-      </div>
-
+    <header className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4">
       <div
-        className={`sm:hidden flex flex-col items-center w-full transition-all ease-in-out duration-300 overflow-hidden
-                     ${isOpen ? 'max-h-[1000px] opacity-100 pt-4' : 'max-h-0 opacity-0 pt-0 pointer-events-none'}`}
+        className={cn(
+          'pointer-events-auto w-full border border-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl transition-all duration-300 sm:w-auto',
+          isOpen ? 'rounded-3xl' : 'rounded-full',
+          compact
+            ? 'bg-[#141415]/90 py-1.5 pl-3 pr-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-20px_rgba(0,0,0,0.9)]'
+            : 'bg-surface/70 py-2 pl-4 pr-2'
+        )}
       >
-        <nav className="flex flex-col items-center space-y-4 w-full">
-          {navLinksData.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`transition-colors w-full text-center ${activeSection === link.href ? 'text-primary' : 'text-text-muted hover:text-text-primary'}`}
-              onClick={() => setIsOpen(false)}
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-        <div className="flex flex-col items-center space-y-4 mt-4 w-full pb-2">
+        <div className="flex items-center justify-between gap-2.5">
+          <a href="#hero" className="mr-2 flex items-center gap-2.5 select-none">
+            <img src="/logo.webp" alt="" className="h-7 w-7" />
+            <span className="text-sm font-semibold tracking-wide text-text-primary">ADAPTAWEB</span>
+          </a>
+
+          <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">
+            {NAV_LINKS.map((link) => {
+              const isActive = active === link.id;
+              return (
+                <a
+                  key={link.id}
+                  href={`#${link.id}`}
+                  aria-current={isActive ? 'true' : undefined}
+                  className={cn(
+                    'inline-flex min-h-10 items-center gap-2 rounded-full px-3.5 text-sm transition-colors duration-200',
+                    isActive
+                      ? 'bg-primary/12 text-text-primary'
+                      : 'text-text-muted hover:bg-white/6 hover:text-text-primary'
+                  )}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      'h-1.5 w-1.5 rounded-full bg-primary transition-all duration-200',
+                      isActive ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+                    )}
+                  />
+                  {link.label}
+                </a>
+              );
+            })}
+          </nav>
+
           <a
-            href="#hero"
-            className="px-4 py-2 text-sm font-semibold text-black bg-gradient-to-br from-primary to-primary/80 rounded-full hover:from-primary/90 hover:to-primary/70 transition-all duration-200 text-center w-full"
-            onClick={() => setIsOpen(false)}
+            href="#contacto"
+            className={cn(
+              'aw-btn ml-1.5 hidden min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-[#0B0B0C] md:inline-flex',
+              active === 'contacto' && 'ring-2 ring-primary/40 ring-offset-2 ring-offset-[#141415]'
+            )}
           >
             Contacto
           </a>
+
+          <button
+            type="button"
+            className="flex h-10 w-10 items-center justify-center text-text-muted md:hidden"
+            onClick={() => setIsOpen((open) => !open)}
+            aria-expanded={isOpen}
+            aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              {isOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
+
+        <div
+          className={cn(
+            'grid overflow-hidden transition-all duration-300 md:hidden',
+            isOpen ? 'max-h-[420px] pt-3 opacity-100' : 'pointer-events-none max-h-0 opacity-0'
+          )}
+        >
+          <nav aria-label="Principal móvil" className="flex flex-col gap-1 pb-2">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.id}
+                href={`#${link.id}`}
+                onClick={() => setIsOpen(false)}
+                className={cn(
+                  'rounded-2xl px-4 py-3 text-center transition-colors',
+                  active === link.id ? 'bg-primary/12 text-text-primary' : 'text-text-muted hover:text-text-primary'
+                )}
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href="#contacto"
+              onClick={() => setIsOpen(false)}
+              className="mt-2 rounded-full bg-primary px-4 py-3 text-center text-sm font-semibold text-[#0B0B0C]"
+            >
+              Contacto
+            </a>
+          </nav>
         </div>
       </div>
     </header>

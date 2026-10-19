@@ -21,10 +21,11 @@ const itemVariants: Variants = {
 };
 
 const NAV_LINKS = [
-  { text: "Inicio", url: "#" },
+  { text: "Inicio", url: "#hero" },
   { text: "Servicios", url: "#servicios" },
-  { text: "Skills", url: "#skills" },
-  { text: "Contacto", url: "#hero" },
+  { text: "Aplicaciones", url: "#aplicaciones" },
+  { text: "Tecnologías", url: "#tecnologias" },
+  { text: "Contacto", url: "#contacto" },
 ];
 
 export default function FooterWithNewsletter() {
