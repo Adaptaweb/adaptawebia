@@ -47,11 +47,12 @@ export function MiniNavbar() {
     <header className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4">
       <div
         className={cn(
-          'pointer-events-auto w-full border border-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl transition-all duration-300 sm:w-auto',
+          // Mismo vidrio que el footer.
+          'pointer-events-auto w-full border border-white/5 bg-secondary/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-xl transition-all duration-300 sm:w-auto',
           isOpen ? 'rounded-3xl' : 'rounded-full',
           compact
-            ? 'bg-[#141415]/90 py-1.5 pl-3 pr-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_18px_50px_-20px_rgba(0,0,0,0.9)]'
-            : 'bg-surface/70 py-2 pl-4 pr-2'
+            ? 'py-1.5 pl-3 pr-1.5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_18px_50px_-20px_rgba(0,0,0,0.9)]'
+            : 'py-2 pl-4 pr-2'
         )}
       >
         <div className="flex items-center justify-between gap-2.5">
@@ -92,7 +93,7 @@ export function MiniNavbar() {
             href="#contacto"
             className={cn(
               'aw-btn ml-1.5 hidden min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-[#0B0B0C] md:inline-flex',
-              active === 'contacto' && 'ring-2 ring-primary/40 ring-offset-2 ring-offset-[#141415]'
+              active === 'contacto' && 'ring-2 ring-primary/40'
             )}
           >
             Contacto
