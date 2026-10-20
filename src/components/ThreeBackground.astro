@@ -45,11 +45,26 @@ if (canvas && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
   geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
   geometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
 
+  // Sprite circular con borde suave: sin él, PointsMaterial dibuja cada partícula como un cuadrado.
+  const orbCanvas = document.createElement("canvas");
+  orbCanvas.width = orbCanvas.height = 64;
+  const orbCtx = orbCanvas.getContext("2d")!;
+  const glow = orbCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  glow.addColorStop(0, "rgba(255,255,255,1)");
+  glow.addColorStop(0.35, "rgba(255,255,255,0.9)");
+  glow.addColorStop(0.6, "rgba(255,255,255,0.25)");
+  glow.addColorStop(1, "rgba(255,255,255,0)");
+  orbCtx.fillStyle = glow;
+  orbCtx.fillRect(0, 0, 64, 64);
+  const orbTexture = new THREE.CanvasTexture(orbCanvas);
+
   const material = new THREE.PointsMaterial({
-    size: 0.12,
+    size: 0.18,
+    map: orbTexture,
     vertexColors: true,
     transparent: true,
-    opacity: 0.8,
+    opacity: 0.85,
+    depthWrite: false,
     sizeAttenuation: true,
     blending: THREE.AdditiveBlending,
   });

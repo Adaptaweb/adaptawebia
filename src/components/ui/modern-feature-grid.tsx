@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { type LucideIcon } from 'lucide-react';
 
@@ -34,6 +34,11 @@ const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
       { stiffness: 300, damping: 30 },
     );
 
+    // Foco verde que sigue al cursor dentro de la tarjeta.
+    const spotX = useTransform(mouseX, (v) => `${v * 100}%`);
+    const spotY = useTransform(mouseY, (v) => `${v * 100}%`);
+    const spotlight = useMotionTemplate`radial-gradient(420px circle at ${spotX} ${spotY}, rgba(69,255,140,0.14), rgba(69,255,140,0) 60%)`;
+
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
       const rect = e.currentTarget.getBoundingClientRect();
       mouseX.set((e.clientX - rect.left) / rect.width);
@@ -54,15 +59,20 @@ const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           className={cn(
-            'flex flex-col items-start gap-4 rounded-2xl border border-white/5 bg-surface/30 p-6 shadow-lg backdrop-blur-xl transition-colors duration-300 ease-out hover:border-primary/20 hover:bg-surface/30',
+            'group relative flex flex-col items-start gap-4 overflow-hidden rounded-2xl border border-white/5 bg-surface/30 p-6 shadow-lg backdrop-blur-xl transition-[border-color,box-shadow] duration-300 ease-out hover:border-primary/25 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_40px_80px_-30px_rgba(0,0,0,0.9)]',
             className,
           )}
           aria-labelledby={titleId}
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+          <motion.span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+            style={{ background: spotlight }}
+          />
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-all duration-500 ease-[cubic-bezier(.2,.8,.2,1)] group-hover:-translate-y-[3px] group-hover:scale-[1.06] group-hover:bg-primary/18 group-hover:shadow-[0_0_28px_-6px_rgba(69,255,140,0.6)]">
             <Icon className="h-6 w-6" aria-hidden="true" />
           </div>
-          <div className="flex flex-col" style={{ transform: 'translateZ(20px)' }}>
+          <div className="relative flex flex-col" style={{ transform: 'translateZ(20px)' }}>
             <h3 id={titleId} className="text-lg font-bold leading-none tracking-tight text-white">
               {title}
             </h3>
