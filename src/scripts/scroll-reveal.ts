@@ -5,11 +5,16 @@ gsap.registerPlugin(ScrollTrigger);
 
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/** Punto de partida de cada variante de `data-reveal`: sube por defecto, o entra por un lado, o crece. */
+/**
+ * Punto de partida de cada variante de `data-reveal`: sube por defecto, entra por un lado, crece,
+ * o se dibuja desde el centro (las líneas de los separadores de sección).
+ */
 const REVEAL_FROM: Record<string, gsap.TweenVars> = {
   left: { x: -80, opacity: 0 },
   right: { x: 80, opacity: 0 },
   zoom: { scale: 0.85, opacity: 0 },
+  "draw-left": { scaleX: 0, transformOrigin: "right center" },
+  "draw-right": { scaleX: 0, transformOrigin: "left center" },
 };
 
 export function initScrollReveal() {
@@ -28,8 +33,9 @@ export function initScrollReveal() {
       x: 0,
       y: 0,
       scale: 1,
+      scaleX: 1,
       opacity: 1,
-      duration: 0.9,
+      duration: el.dataset.reveal?.startsWith("draw") ? 1.4 : 0.9,
       ease: "power3.out",
       scrollTrigger: {
         trigger: el,

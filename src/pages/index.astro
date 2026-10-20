@@ -8,6 +8,7 @@ import AplicacionesSection from "../components/AplicacionesSection";
 import SkillsSection from "../components/SkillsSection.astro";
 import ContactSection from "../components/ContactSection";
 import FooterWrapper from "../components/FooterWrapper.astro";
+import SectionDivider from "../components/SectionDivider.astro";
 ---
 
 <BaseLayout
@@ -18,9 +19,13 @@ import FooterWrapper from "../components/FooterWrapper.astro";
   <Navigation />
   <main class="relative z-10 overflow-x-clip">
     <HeroSection client:load />
+    <SectionDivider label="02 · Servicios" />
     <Servicios />
+    <SectionDivider label="03 · Aplicaciones" />
     <AplicacionesSection client:visible />
+    <SectionDivider label="04 · Tecnologías" />
     <SkillsSection />
+    <SectionDivider label="05 · Contacto" />
     <ContactSection client:load />
   </main>
   <FooterWrapper />

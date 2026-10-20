@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AutoVideo } from "@/components/ui/auto-video";
 import { cn } from "@/lib/utils";
 
@@ -158,85 +159,71 @@ export default function AplicacionesSection() {
   const [paused, setPaused] = useState(false);
   const n = APPS.length;
   const go = (k: number) => setIndex(((k % n) + n) % n);
+  const selectorRef = useRef<HTMLDivElement | null>(null);
+
+  // En pantallas angostas el selector se desplaza para dejar visible la pastilla activa.
+  useEffect(() => {
+    const scroller = selectorRef.current;
+    const tab = scroller?.querySelector<HTMLElement>(`#app-tab-${index}`);
+    if (!scroller || !tab || scroller.scrollWidth <= scroller.clientWidth) return;
+    const offset = tab.getBoundingClientRect().left - scroller.getBoundingClientRect().left;
+    scroller.scrollTo({ left: scroller.scrollLeft + offset - (scroller.clientWidth - tab.offsetWidth) / 2, behavior: "smooth" });
+  }, [index]);
 
   return (
-    <section id="aplicaciones" className="relative py-24 md:py-32">
-      <div
-        className={cn(
-          "mx-auto grid w-full max-w-[1400px] items-center gap-12 px-6 lg:grid-cols-[minmax(0,430px)_minmax(0,1fr)] lg:gap-10 2xl:max-w-[1600px]",
-          paused && "aw-apps-paused"
-        )}
-        onPointerEnter={(e) => e.pointerType === "mouse" && setPaused(true)}
-        onPointerLeave={() => setPaused(false)}
-      >
-        {/* Lista: el elemento activo muestra su detalle y una línea que, al llenarse, pasa al siguiente */}
-        <div data-reveal="left" className="relative z-[2] flex flex-col gap-7">
-          <div className="flex flex-col gap-3">
-            <p className="text-[17px] font-semibold text-primary">Nuestras aplicaciones</p>
-            <h2 className="text-[clamp(38px,4.2vw,56px)] font-bold leading-[1.04] tracking-[-0.04em] text-white">
-              Ya está funcionando.
-            </h2>
-          </div>
-          <div role="tablist" aria-label="Aplicaciones" className="flex flex-col border-t border-white/8">
+    <section
+      id="aplicaciones"
+      className={cn("relative py-20 md:py-28", paused && "aw-apps-paused")}
+      onPointerEnter={(e) => e.pointerType === "mouse" && setPaused(true)}
+      onPointerLeave={() => setPaused(false)}
+    >
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col items-center gap-7 px-6 2xl:max-w-[1600px]">
+        <div data-reveal className="flex flex-col items-center gap-3 text-center">
+          <p className="text-[17px] font-semibold text-primary">Nuestras aplicaciones</p>
+          <h2 className="text-[clamp(38px,4.2vw,56px)] font-bold leading-[1.04] tracking-[-0.04em] text-white">Ya está funcionando.</h2>
+        </div>
+
+        {/* Selector: la pastilla activa se llena y pasa sola a la siguiente; el cursor sobre la sección la pausa */}
+        <div ref={selectorRef} data-reveal className="max-w-full overflow-x-auto [scrollbar-width:none]">
+          <div role="tablist" aria-label="Aplicaciones" className="flex w-max gap-1 rounded-full border border-white/8 bg-secondary/15 p-1.5">
             {APPS.map((app, k) => {
               const on = k === index;
               return (
-                <div key={app.name} className={cn("aw-app-item border-b border-white/8 py-4", on && "is-on")}>
-                  <button
-                    type="button"
-                    role="tab"
-                    id={`app-tab-${k}`}
-                    aria-selected={on}
-                    aria-controls="app-stage"
-                    onClick={() => go(k)}
-                    className="flex w-full items-baseline gap-4 text-left"
-                  >
-                    <span className="aw-app-num font-mono text-[13px] text-[#6E6E73]">0{k + 1}</span>
-                    <span className="aw-app-name text-2xl font-semibold tracking-[-0.03em] text-[#6E6E73] md:text-[28px]">
-                      {app.name}
-                    </span>
-                  </button>
-                  <div className="aw-app-detail pl-[38px]" aria-hidden={!on}>
-                    <p className="mt-2.5 text-[13px] font-semibold text-primary">{app.kind}</p>
-                    <p className="mt-1.5 text-[15px] leading-relaxed text-text-muted">{app.desc}</p>
-                    {app.link && (
-                      <a
-                        href={app.link.href}
-                        target="_blank"
-                        rel="noopener"
-                        tabIndex={on ? undefined : -1}
-                        className="aw-more inline-flex min-h-10 items-center gap-1 text-[15px] text-primary"
-                      >
-                        {app.link.label} <span className="aw-chev">›</span>
-                      </a>
-                    )}
-                  </div>
-                  <span aria-hidden="true" className="mt-3 block h-0.5 overflow-hidden rounded-full bg-white/6">
-                    <span
-                      className="aw-app-bar block h-full bg-primary"
-                      onAnimationEnd={() => {
-                        if (on) go(k + 1);
-                      }}
-                    />
-                  </span>
-                </div>
+                <button
+                  key={app.name}
+                  type="button"
+                  role="tab"
+                  id={`app-tab-${k}`}
+                  aria-selected={on}
+                  aria-controls="app-stage"
+                  onClick={() => go(k)}
+                  className={cn("aw-seg relative min-h-10 overflow-hidden rounded-full px-4 text-sm font-semibold text-text-muted md:px-5", on && "is-on")}
+                >
+                  <span className="relative z-[1]">{app.name}</span>
+                  <span
+                    aria-hidden="true"
+                    className="aw-seg-fill absolute inset-x-0 bottom-0 h-[3px] bg-black/35"
+                    onAnimationEnd={() => {
+                      if (on) go(k + 1);
+                    }}
+                  />
+                </button>
               );
             })}
           </div>
         </div>
 
-        {/* Carrusel 3D sincronizado con la lista */}
+        {/* Escena 3D simétrica: una tarjeta al frente y una a cada lado */}
         <div
           id="app-stage"
-          data-reveal="right"
+          data-reveal="zoom"
           role="tabpanel"
           aria-labelledby={`app-tab-${index}`}
-          aria-live="polite"
-          className="relative z-[1] aspect-[600/470] w-full [perspective:1800px] lg:aspect-auto lg:h-[640px]"
+          className="relative aspect-[600/470] w-full [perspective:1800px] md:aspect-auto md:h-[470px]"
         >
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[80%] w-[95%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(69,255,140,0.18),rgba(69,255,140,0)_70%)]"
+            className="pointer-events-none absolute left-1/2 top-1/2 h-full w-[min(900px,100%)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(69,255,140,0.16),rgba(69,255,140,0)_70%)]"
           />
           {APPS.map((app, k) => {
             const d = ((k - index + n + 2) % n) - 2;
@@ -248,24 +235,76 @@ export default function AplicacionesSection() {
                 type="button"
                 onClick={() => go(k)}
                 aria-label={front ? app.name : `Ver ${app.name}`}
-                tabIndex={ad > 1 ? -1 : undefined}
+                tabIndex={front || ad === 1 ? undefined : -1}
+                aria-hidden={ad === 2 || undefined}
                 className={cn(
                   "aw-card absolute left-1/2 top-1/2 aspect-[600/430] w-[min(600px,88%)] cursor-pointer overflow-hidden rounded-[28px] border border-white/10 text-left shadow-[0_50px_100px_-30px_rgba(0,0,0,0.95)]",
-                  "bg-[radial-gradient(ellipse_at_50%_80%,rgba(69,255,140,0.14),rgba(13,14,16,0)_60%),#0D0E10]",
-                  front ? "is-front" : "is-side"
+                  "bg-[#0D0E10] bg-[image:radial-gradient(ellipse_at_50%_80%,rgba(69,255,140,0.14),rgba(13,14,16,0)_60%)]",
+                  front ? "is-front" : "is-side",
+                  ad === 2 && "pointer-events-none"
                 )}
                 style={{
-                  transform: `translate(-50%, -50%) translateX(${d * 42}%) scale(${1 - ad * 0.17}) rotateY(${-d * 30}deg)`,
+                  transform: `translate(-50%, -50%) translateX(${d * 62}%) rotateY(${-d * 38}deg) scale(${1 - ad * 0.12})`,
                   zIndex: 10 - ad,
-                  opacity: ad === 2 ? 0.25 : ad === 1 ? 0.7 : 1,
-                  filter: `brightness(${front ? 1 : 0.5})`,
+                  opacity: ad === 2 ? 0 : 1,
+                  filter: `brightness(${front ? 1 : 0.45})`,
                 }}
               >
                 {app.render(front)}
-                <span className="absolute bottom-[4%] left-[3%] rounded-full border border-white/10 bg-[#141415]/85 px-3.5 py-1.5 text-[13px] font-semibold text-text-primary backdrop-blur-md">
-                  {app.name}
-                </span>
               </button>
+            );
+          })}
+
+          <button
+            type="button"
+            onClick={() => go(index - 1)}
+            aria-label="Aplicación anterior"
+            className="aw-arrow absolute left-0 top-1/2 z-20 hidden h-13 w-13 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-surface/80 text-text-primary backdrop-blur-md sm:inline-flex lg:left-[6%]"
+          >
+            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => go(index + 1)}
+            aria-label="Aplicación siguiente"
+            className="aw-arrow absolute right-0 top-1/2 z-20 hidden h-13 w-13 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-surface/80 text-text-primary backdrop-blur-md sm:inline-flex lg:right-[6%]"
+          >
+            <ChevronRight className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
+
+        {/* Ficha alineada en tres columnas bajo la tarjeta del frente */}
+        <div data-reveal aria-live="polite" className="aw-glass grid w-full max-w-[1000px] rounded-[22px] px-6 py-5 md:px-8">
+          {APPS.map((app, k) => {
+            const on = k === index;
+            return (
+              <div
+                key={app.name}
+                aria-hidden={!on}
+                className={cn("aw-info grid items-center gap-x-8 gap-y-3 md:grid-cols-[200px_minmax(0,1fr)_auto]", on && "is-on")}
+              >
+                <div className="flex flex-col gap-1">
+                  <span className="font-mono text-[13px] text-[#6E6E73]">0{k + 1} / 0{n}</span>
+                  <span className="text-[13px] font-semibold text-primary">{app.kind}</span>
+                </div>
+                <div className="flex min-w-0 flex-col gap-1">
+                  <span className="text-[22px] font-bold tracking-[-0.02em] text-text-primary">{app.name}</span>
+                  <span className="text-[15px] leading-snug text-text-muted">{app.desc}</span>
+                </div>
+                <div className="flex md:justify-end">
+                  {app.link && (
+                    <a
+                      href={app.link.href}
+                      target="_blank"
+                      rel="noopener"
+                      tabIndex={on ? undefined : -1}
+                      className="aw-more inline-flex min-h-11 items-center gap-1.5 rounded-full border border-primary/30 px-5 text-sm font-semibold text-primary transition-colors hover:border-primary/50 hover:bg-primary/12"
+                    >
+                      {app.link.label} <span className="aw-chev">›</span>
+                    </a>
+                  )}
+                </div>
+              </div>
             );
           })}
         </div>

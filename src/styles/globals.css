@@ -355,35 +355,46 @@ html {
   .aw-typing { opacity: 0; }
 }
 
-/* ---------- Aplicaciones: lista que avanza sola + carrusel 3D ---------- */
+/* ---------- Aplicaciones: carrusel 3D centrado con selector ---------- */
 
 @keyframes aw-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-.aw-app-item .aw-app-name,
-.aw-app-item .aw-app-num { transition: color .35s; }
-.aw-app-item:hover .aw-app-name { color: #D2D2D7; }
-.aw-app-item.is-on .aw-app-name { color: #F5F5F7; }
-.aw-app-item.is-on .aw-app-num { color: #45FF8C; }
-.aw-app-item .aw-app-detail { max-height: 0; opacity: 0; overflow: hidden; transition: max-height .6s cubic-bezier(.2,.8,.2,1), opacity .5s; }
-.aw-app-item.is-on .aw-app-detail { max-height: 240px; opacity: 1; }
-.aw-app-item .aw-app-bar { transform-origin: left center; transform: scaleX(0); }
-.aw-app-item.is-on .aw-app-bar { animation: aw-grow 6s linear forwards; }
-.aw-apps-paused .aw-app-item.is-on .aw-app-bar { animation-play-state: paused; }
+/* Selector segmentado: la pastilla activa se llena y, al terminar, pasa a la siguiente */
+.aw-seg { transition: color .3s, background-color .3s; }
+.aw-seg:hover { color: #F5F5F7; }
+.aw-seg.is-on { color: #0B0B0C; background-color: #45FF8C; }
+.aw-seg .aw-seg-fill { transform-origin: left center; transform: scaleX(0); }
+.aw-seg.is-on .aw-seg-fill { animation: aw-grow 6s linear forwards; }
+.aw-apps-paused .aw-seg.is-on .aw-seg-fill { animation-play-state: paused; }
 
-.aw-card { transition: transform 1s cubic-bezier(.2,.8,.2,1), opacity 1s, filter 1s, box-shadow .5s, border-color .5s; }
+.aw-card { transition: transform 1s cubic-bezier(.2,.8,.2,1), opacity .8s, filter 1s, box-shadow .5s, border-color .5s; }
 .aw-card.is-front { animation: aw-float 7s ease-in-out infinite; }
 .aw-card.is-front:hover {
   border-color: rgba(69,255,140,0.4);
   box-shadow: 0 60px 120px -30px rgba(0,0,0,0.95), 0 0 70px -20px rgba(69,255,140,0.5);
 }
-.aw-card.is-side:hover { filter: brightness(.8) !important; }
+.aw-card.is-side:hover { filter: brightness(.75) !important; }
 .aw-card .aw-dev { transition: transform .8s cubic-bezier(.2,.8,.2,1); }
 .aw-card.is-front:hover .aw-dev-a { transform: translateY(-10px); }
 .aw-card.is-front:hover .aw-dev-b { transform: translateY(-16px) rotate(-2deg); }
 .aw-card.is-front:hover .aw-dev-c { transform: translateY(-14px) rotate(2deg); }
 
+/* Ficha bajo la tarjeta: todas apiladas en la misma celda, la activa aparece con un fundido */
+.aw-info { grid-area: 1 / 1; opacity: 0; transform: translateY(10px); visibility: hidden; transition: opacity .6s, transform .6s, visibility .6s; }
+.aw-info.is-on { opacity: 1; transform: none; visibility: visible; }
+
+.aw-arrow { transition: background-color .25s, border-color .25s, transform .25s; }
+.aw-arrow:hover { background-color: rgba(69,255,140,0.12); border-color: rgba(69,255,140,0.4); transform: scale(1.06); }
+
+/* Separador de secciones: orbe que late */
+@keyframes aw-orb {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(69,255,140,.55), 0 0 24px 6px rgba(69,255,140,.45); }
+  50% { transform: scale(1.2); box-shadow: 0 0 0 12px rgba(69,255,140,0), 0 0 40px 10px rgba(69,255,140,.55); }
+}
+.aw-orb { animation: aw-orb 3s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
-  .aw-app-item.is-on .aw-app-bar { animation: none; transform: scaleX(1); }
-  .aw-card.is-front { animation: none; }
-  .aw-card, .aw-card .aw-dev, .aw-app-item .aw-app-detail { transition: none; }
+  .aw-seg.is-on .aw-seg-fill { animation: none; transform: scaleX(1); }
+  .aw-card.is-front, .aw-orb { animation: none; }
+  .aw-card, .aw-card .aw-dev, .aw-info { transition: none; }
 }
