@@ -1,0 +1,277 @@
+---
+// Política de privacidad de la app Famidoc (enlazada desde Google Play y la
+// App Store). Página estática, fuera de la navegación del sitio.
+export const prerender = true;
+
+const UPDATED = "27 de octubre de 2026";
+const CONTACT = "hola@adaptaweb.cl";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Política de privacidad · Famidoc</title>
+    <meta
+      name="description"
+      content="Cómo Famidoc trata los documentos y datos de tu familia."
+    />
+    <meta name="theme-color" content="#0F4C5C" />
+    <link rel="icon" href="/fav.ico" />
+    <style is:global>
+      :root {
+        --ink: #1c2b30;
+        --muted: #4a5a5f;
+        --ground: #f7f5f0;
+        --card: #ffffff;
+        --line: #e6e2d8;
+        --brand: #0f4c5c;
+        --accent: #b5650f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ink: #eef2f3;
+          --muted: #a9b6ba;
+          --ground: #0b2b34;
+          --card: #103640;
+          --line: #1d4a56;
+          --brand: #a6e3ee;
+          --accent: #f2a541;
+        }
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--ground);
+        color: var(--ink);
+        font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 48px 20px 80px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 32px;
+      }
+      .name {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--brand);
+      }
+      .name span {
+        color: var(--accent);
+      }
+      h1 {
+        font-size: 34px;
+        line-height: 1.15;
+        margin: 0 0 8px;
+      }
+      h2 {
+        font-size: 21px;
+        margin: 40px 0 8px;
+      }
+      p,
+      li {
+        color: var(--ink);
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li + li {
+        margin-top: 6px;
+      }
+      .updated {
+        color: var(--muted);
+        margin: 0;
+      }
+      .summary {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-top: 28px;
+      }
+      .summary h2 {
+        margin-top: 0;
+      }
+      a {
+        color: var(--brand);
+        font-weight: 600;
+      }
+      footer {
+        margin-top: 56px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <svg width="48" height="48" viewBox="0 0 100 100" aria-hidden="true">
+          <rect width="100" height="100" rx="22" fill="#0F4C5C"></rect>
+          <path
+            d="M50 20 L74 40 V68 a5 5 0 0 1 -5 5 H31 a5 5 0 0 1 -5 -5 V40 Z"
+            fill="#F7F5F0"
+            stroke="#F7F5F0"
+            stroke-width="4"
+            stroke-linejoin="round"></path>
+          <rect x="37" y="45" width="14" height="4.5" rx="2.25" fill="#F2A541"></rect>
+          <rect x="37" y="53.5" width="26" height="4.5" rx="2.25" fill="#0F4C5C"></rect>
+          <rect x="37" y="62" width="20" height="4.5" rx="2.25" fill="#0F4C5C"></rect>
+          <path d="M63 20 V28" stroke="#F7F5F0" stroke-width="5" stroke-linecap="round"></path>
+        </svg>
+        <div class="name">Fami<span>doc</span></div>
+      </header>
+
+      <h1>Política de privacidad</h1>
+      <p class="updated">Última actualización: {UPDATED}</p>
+
+      <section class="summary">
+        <h2>En resumen</h2>
+        <ul>
+          <li>Tus documentos se guardan <strong>cifrados en tu teléfono</strong>.</li>
+          <li>El texto de los documentos se lee <strong>en el teléfono</strong>, sin enviarlo a internet.</li>
+          <li>
+            Si compartes la familia entre varios teléfonos, lo que viaja va <strong>cifrado de punta a punta</strong>:
+            nuestro servidor lo guarda pero no puede leerlo.
+          </li>
+          <li>No hay publicidad, no hay analítica y no vendemos ni compartimos tus datos.</li>
+        </ul>
+      </section>
+
+      <h2>Quiénes somos</h2>
+      <p>
+        Famidoc es una app desarrollada por Adaptaweb (Chile). Para cualquier consulta sobre esta política o sobre
+        tus datos, escríbenos a <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+      </p>
+
+      <h2>Qué datos maneja la app y para qué</h2>
+      <ul>
+        <li>
+          <strong>Datos de tu familia:</strong> nombres, fechas, fotos de perfil, datos clave (por ejemplo
+          alergias o RUT) y los datos de mascotas, hogares y autos que tú ingreses. Sirven para ordenar los
+          documentos de cada integrante.
+        </li>
+        <li>
+          <strong>Documentos:</strong> los archivos, fotos y PDF que compartes con la app o escaneas con la cámara,
+          y el texto que se extrae de ellos para clasificarlos y buscarlos.
+        </li>
+        <li>
+          <strong>Recordatorios:</strong> fechas de vencimiento para avisarte a tiempo.
+        </li>
+      </ul>
+      <p>
+        Todo esto se guarda en tu teléfono, en el espacio privado de la app, al que otras apps no pueden acceder.
+        Los archivos de los documentos y las fotos además se guardan cifrados. La lectura del texto (reconocimiento
+        de caracteres) se hace en el propio teléfono: los documentos no se envían a ningún servicio para leerlos.
+      </p>
+
+      <h2>Permisos del teléfono</h2>
+      <ul>
+        <li><strong>Cámara:</strong> solo para fotografiar o escanear documentos cuando tú lo pides.</li>
+        <li><strong>Notificaciones:</strong> para avisarte de vencimientos y de novedades de tu familia.</li>
+        <li>
+          <strong>Huella, rostro o bloqueo del teléfono:</strong> para proteger la app. La app no recibe tu huella
+          ni tu rostro; solo sabe si el teléfono confirmó que eres tú.
+        </li>
+      </ul>
+
+      <h2>Familia conectada (opcional)</h2>
+      <p>
+        Si decides compartir la familia entre varios teléfonos, los cambios y documentos se envían a nuestro
+        servidor de sincronización, alojado en Cloudflare. Antes de salir del teléfono se cifran con una clave que
+        solo tienen los teléfonos de tu familia, así que ni nosotros ni Cloudflare podemos leer su contenido.
+      </p>
+      <p>Para que la sincronización funcione, el servidor sí guarda sin cifrar:</p>
+      <ul>
+        <li>el nombre que le pones a cada teléfono (por ejemplo, "Teléfono de Sofi");</li>
+        <li>identificadores técnicos de cada teléfono y de la familia, y si cada teléfono está aprobado;</li>
+        <li>las fechas en que se hicieron los cambios.</li>
+      </ul>
+      <p>
+        Las invitaciones con código QR vencen a los pocos minutos y solo se pueden usar una vez. Si no usas la
+        familia conectada, nada de tu familia sale del teléfono.
+      </p>
+
+      <h2>Avisos push</h2>
+      <p>
+        Para avisarte cuando otro teléfono de tu familia hace cambios usamos Firebase Cloud Messaging, de Google.
+        Para eso se guarda un identificador del teléfono que entrega Firebase. Lo que viaja en el aviso es solo el
+        tipo de aviso y, cuando corresponde, una nota cifrada que únicamente tus teléfonos pueden abrir. Google
+        trata ese identificador según su
+        <a href="https://policies.google.com/privacy" rel="noopener">política de privacidad</a>.
+      </p>
+
+      <h2>Lo que no hacemos</h2>
+      <ul>
+        <li>No mostramos publicidad.</li>
+        <li>No usamos herramientas de analítica ni de seguimiento.</li>
+        <li>No vendemos, arrendamos ni compartimos tus datos con terceros para otros fines.</li>
+        <li>No pedimos crear una cuenta, correo ni contraseña.</li>
+      </ul>
+
+      <h2>Exportar y respaldar</h2>
+      <p>
+        Desde Ajustes puedes exportar todos tus documentos y datos en un archivo ZIP. Ese archivo
+        <strong>no va cifrado</strong>: guárdalo en un lugar seguro. Dónde lo guardes queda bajo tu control.
+      </p>
+
+      <h2>Cuánto tiempo se guardan y cómo borrarlos</h2>
+      <ul>
+        <li>
+          Los datos en tu teléfono se guardan hasta que los borras o desinstalas la app. Desinstalarla los elimina.
+        </li>
+        <li>
+          Un teléfono puede salir de la familia conectada en cualquier momento desde la app; quien administra la
+          familia también puede quitarlo.
+        </li>
+        <li>
+          Los datos cifrados de una familia conectada se guardan en el servidor mientras la familia exista. Para
+          borrarlos por completo, escríbenos a <a href={`mailto:${CONTACT}`}>{CONTACT}</a> desde la app o indicando
+          el nombre de un teléfono de la familia, y los eliminaremos en un plazo máximo de 30 días.
+        </li>
+      </ul>
+
+      <h2>Seguridad</h2>
+      <p>
+        Los archivos de los documentos se cifran en el teléfono, el resto de los datos queda en el espacio privado
+        de la app y la app puede bloquearse con el bloqueo del teléfono, un PIN o un patrón. Ningún sistema es infalible, pero diseñamos Famidoc para que tus documentos
+        no sean legibles fuera de los teléfonos de tu familia.
+      </p>
+
+      <h2>Niños</h2>
+      <p>
+        Famidoc está pensada para que la usen personas adultas. Puede contener datos de niños de la familia, que
+        ingresa y administra su madre, padre o tutor.
+      </p>
+
+      <h2>Tus derechos</h2>
+      <p>
+        Puedes pedirnos acceso, corrección o eliminación de los datos que guardamos en el servidor, conforme a la
+        legislación chilena de protección de datos personales. Escríbenos a
+        <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+      </p>
+
+      <h2>Cambios a esta política</h2>
+      <p>
+        Si cambiamos esta política publicaremos la nueva versión en esta misma página, con su fecha de
+        actualización. Si el cambio es importante, también lo avisaremos en la app.
+      </p>
+
+      <footer>Famidoc · Adaptaweb · <a href={`mailto:${CONTACT}`}>{CONTACT}</a></footer>
+    </main>
+  </body>
+</html>
