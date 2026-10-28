@@ -3,7 +3,7 @@
 // App Store). Página estática, fuera de la navegación del sitio.
 export const prerender = true;
 
-const UPDATED = "27 de octubre de 2026";
+const UPDATED = "28 de octubre de 2026";
 const CONTACT = "hola@adaptaweb.cl";
 ---
 
@@ -199,11 +199,26 @@ const CONTACT = "hola@adaptaweb.cl";
       <ul>
         <li>el nombre que le pones a cada teléfono (por ejemplo, "Teléfono de Sofi");</li>
         <li>identificadores técnicos de cada teléfono y de la familia, y si cada teléfono está aprobado;</li>
-        <li>las fechas en que se hicieron los cambios.</li>
+        <li>las fechas en que se hicieron los cambios;</li>
+        <li>cuántos archivos hay, cuánto pesan y el plan de la familia, para aplicar su límite de espacio.</li>
       </ul>
       <p>
         Las invitaciones con código QR vencen a los pocos minutos y solo se pueden usar una vez. Si no usas la
         familia conectada, nada de tu familia sale del teléfono.
+      </p>
+      <p>
+        Como cualquier servicio en internet, Cloudflare procesa la dirección IP de cada conexión y guarda registros
+        técnicos por unos pocos días para detectar errores y abusos.
+      </p>
+
+      <h2>Planes y pagos</h2>
+      <p>
+        Famidoc tiene un plan gratis y planes pagados con más espacio en la nube. Los planes se compran con Google
+        Play o la App Store: Famidoc no recibe ni guarda los datos de tu tarjeta. Para saber qué plan tiene cada
+        familia usamos RevenueCat, que recibe de la tienda el estado de la suscripción asociado al identificador
+        técnico de la familia, sin tu nombre ni tu correo. RevenueCat trata esos datos según su
+        <a href="https://www.revenuecat.com/privacy" rel="noopener">política de privacidad</a>. La suscripción se
+        cancela desde Google Play o la App Store.
       </p>
 
       <h2>Avisos push</h2>
@@ -239,9 +254,14 @@ const CONTACT = "hola@adaptaweb.cl";
           familia también puede quitarlo.
         </li>
         <li>
-          Los datos cifrados de una familia conectada se guardan en el servidor mientras la familia exista. Para
-          borrarlos por completo, escríbenos a <a href={`mailto:${CONTACT}`}>{CONTACT}</a> desde la app o indicando
-          el nombre de un teléfono de la familia, y los eliminaremos en un plazo máximo de 30 días.
+          Cuando borras un documento de la familia conectada, su archivo cifrado se elimina del servidor 30 días
+          después, por si fue un error.
+        </li>
+        <li>
+          Los datos cifrados de una familia conectada se guardan en el servidor mientras la familia exista. Quien
+          administra la familia puede eliminarla desde la app, y eso borra de inmediato todos sus archivos y datos
+          del servidor. También puedes escribirnos a <a href={`mailto:${CONTACT}`}>{CONTACT}</a> indicando el
+          nombre de un teléfono de la familia, y los eliminaremos en un plazo máximo de 30 días.
         </li>
       </ul>
 
