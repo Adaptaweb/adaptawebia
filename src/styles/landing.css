@@ -64,18 +64,17 @@ html, body { background: #07080A; }
 
 /* vidrio líquido: desenfoque saturado, canto especular y un reflejo que cruza */
 @keyframes glide { 0% { transform: translateX(-70%) skewX(-14deg); } 55%, 100% { transform: translateX(240%) skewX(-14deg); } }
+/* mismo cristal que la barra: fondo plano translúcido y desenfoque parejo */
 .liquid {
   position: relative;
-  background: linear-gradient(158deg, rgba(255,255,255,.11), rgba(255,255,255,.028) 44%, rgba(8,12,10,.52));
-  backdrop-filter: blur(26px) saturate(185%) brightness(1.06);
-  -webkit-backdrop-filter: blur(26px) saturate(185%) brightness(1.06);
-  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(20,23,22,.62);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255,255,255,.1);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.3),
-    inset 1px 0 0 rgba(255,255,255,.1),
-    inset 0 -1px 0 rgba(255,255,255,.05),
-    0 50px 100px -40px rgba(0,0,0,.95),
-    0 0 80px -34px rgba(69,255,140,.45);
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 24px 56px -28px rgba(0,0,0,.95),
+    0 0 70px -36px rgba(69,255,140,.35);
 }
 .liquid::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(128% 82% at 16% -6%, rgba(255,255,255,.17), rgba(255,255,255,0) 56%); }
 .liquid::after { content: ""; position: absolute; top: -20%; bottom: -20%; left: 0; width: 38%; pointer-events: none; background: linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,.085) 48%, rgba(255,255,255,0)); animation: glide 11s cubic-bezier(.45,0,.2,1) infinite; }
@@ -418,3 +417,37 @@ html, body { background: #07080A; }
   #hero .hero-counts dd { font-size: 28px; }
   #hero .hero-counts dt { margin-bottom: 3px; font-size: 12px; }
 }
+
+/* ---------- servicios sobre claro ---------- */
+/* El explorador vive ahora en blanco: lista en tinta, panel como tarjeta clara. */
+#servicios .exp-item { color: #0B0E0F; }
+#servicios .exp-item:hover { background: rgba(11,14,15,.05); }
+#servicios .exp-num { color: #8A918F; }
+#servicios .exp-caret { color: #A6ACAA; }
+#servicios .exp-bar { background: #0F9A47; }
+#servicios .exp-item.on { background: #FFFFFF; border-color: rgba(15,154,71,.4); box-shadow: 0 10px 26px -16px rgba(11,14,15,.3); }
+#servicios .exp-item.on .exp-num,
+#servicios .exp-item.on .exp-caret { color: #0F9A47; }
+#servicios .exp.kb .exp-item.on { outline-color: #0F9A47; }
+
+#servicios .exp-panel {
+  background: #FFFFFF;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: rgba(11,14,15,.08);
+  box-shadow: 0 2px 10px rgba(11,14,15,.06), 0 30px 60px -40px rgba(11,14,15,.35);
+}
+#servicios .exp-panel::before { background: none; }
+#servicios .pane-tile { background: rgba(15,154,71,.12); color: #0F9A47; }
+#servicios .pane h3 { color: #0B0E0F; }
+#servicios .pane > p { color: #5A615F; }
+#servicios .pane li { color: #3C4341; }
+#servicios .dot { background: #0F9A47; }
+#servicios .pane-foot { border-top-color: rgba(11,14,15,.1); }
+#servicios .chip { border-color: rgba(11,14,15,.14); background: rgba(11,14,15,.04); color: #3C4341; }
+#servicios .chip:hover { border-color: rgba(15,154,71,.45); background: rgba(15,154,71,.1); }
+
+/* ---------- los saltos del menú no quedan bajo la barra ---------- */
+/* globals.css ya pone scroll-padding-top: 96px en html; estos 96 se suman,
+   así que la sección cae a 192 del borde y deja ver la onda bajo la barra. */
+section[id] { scroll-margin-top: 96px; }
