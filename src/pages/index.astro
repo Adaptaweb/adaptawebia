@@ -1,41 +1,39 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Navigation from "../components/Navigation.astro";
-import ThreeBackground from "../components/ThreeBackground.astro";
-import HeroSection from "../components/HeroSection";
-import Servicios from "../components/Servicios.astro";
-import AplicacionesSection from "../components/AplicacionesSection";
-import SkillsSection from "../components/SkillsSection.astro";
-import ContactSection from "../components/ContactSection";
-import FooterWrapper from "../components/FooterWrapper.astro";
-import SectionDivider from "../components/SectionDivider.astro";
+import Nav from "../components/landing/Nav.astro";
+import Hero from "../components/landing/Hero.astro";
+import Servicios from "../components/landing/Servicios.astro";
+import Trabajo from "../components/landing/Trabajo.astro";
+import Proceso from "../components/landing/Proceso.astro";
+import Comparativa from "../components/landing/Comparativa.astro";
+import Cotizar from "../components/landing/Cotizar.astro";
+import Faq from "../components/landing/Faq.astro";
+import Contacto from "../components/landing/Contacto.astro";
+import Footer from "../components/landing/Footer.astro";
+import "../styles/landing.css";
 ---
 
 <BaseLayout
   title="AdaptaWeb — Desarrollo Inteligente con IA"
   description="Creamos aplicaciones móviles y plataformas web que, gracias a la IA, se adaptan en tiempo real al comportamiento de los usuarios."
 >
-  <ThreeBackground />
-  <Navigation />
-  <main class="relative z-10 overflow-x-clip">
-    <HeroSection client:load />
-    <SectionDivider />
-    <Servicios />
-    <SectionDivider />
-    <AplicacionesSection client:visible />
-    <SectionDivider />
-    <SkillsSection />
-    <SectionDivider />
-    <ContactSection client:load />
-  </main>
-  <FooterWrapper />
+  <div class="aw-landing" style="width: 100%; overflow-x: clip; background: #07080A">
+    <Nav />
+    <main>
+      <Hero />
+      <Servicios />
+      <Trabajo />
+      <Proceso />
+      <Comparativa />
+      <Cotizar />
+      <Faq />
+      <Contacto />
+    </main>
+    <Footer />
+  </div>
 </BaseLayout>
 
 <script>
-import { initParallax, initScrollReveal } from "../scripts/scroll-reveal";
-
-document.addEventListener("DOMContentLoaded", () => {
-  initScrollReveal();
-  initParallax();
-});
+  import { initLanding } from "../scripts/landing.js";
+  initLanding();
 </script>
