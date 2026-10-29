@@ -355,3 +355,66 @@ html, body { background: #07080A; }
 .soc .lbl::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 0; height: 1px; background: var(--brand); transform: translateX(-50%); transition: width .3s; }
 .soc:hover .lbl::after { width: 100%; }
 @media (max-width: 760px) { .soc .lbl { display: none; } }
+
+/* ---------- navbar que se funde con el hero ---------- */
+/* Abierta de lado a lado mientras estás en el hero; al bajar se contrae en píldora. */
+.aw-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 24px 40px; transition: padding .6s cubic-bezier(.16,1,.3,1); }
+.aw-nav-bar {
+  display: flex; align-items: center; gap: 16px;
+  margin: 0 auto; width: 100%; max-width: 1760px;
+  border-radius: 999px; padding: 10px 10px 10px 14px;
+  border: 1px solid transparent; background: rgba(20,23,22,0);
+  box-shadow: 0 0 0 0 rgba(0,0,0,0);
+  transition: max-width .7s cubic-bezier(.16,1,.3,1), padding .6s cubic-bezier(.16,1,.3,1),
+              background .5s, border-color .5s, box-shadow .5s, backdrop-filter .5s;
+}
+.aw-nav-logo { display: flex; align-items: center; gap: 11px; flex: none; color: #F5F5F7; text-decoration: none; font-weight: 700; letter-spacing: -.02em; font-size: 17px; white-space: nowrap; }
+.aw-nav-logo img { width: 34px; height: 34px; border-radius: 50%; transition: width .6s cubic-bezier(.16,1,.3,1), height .6s cubic-bezier(.16,1,.3,1); }
+.aw-nav-links { display: flex; align-items: center; gap: 10px; margin: 0 auto; transition: gap .6s cubic-bezier(.16,1,.3,1); }
+.aw-nav-links a { color: #C9C9CE; text-decoration: none; font-size: 15px; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center; white-space: nowrap; }
+.aw-nav-cta { flex: none; background: #45FF8C; color: #04150B; text-decoration: none; font-weight: 650; font-size: 15px; border-radius: 999px; padding: 0 22px; min-height: 44px; display: inline-flex; align-items: center; white-space: nowrap; box-shadow: 0 10px 34px -12px rgba(69,255,140,.7); }
+
+.aw-nav.is-stuck { padding: 12px 24px; }
+.aw-nav.is-stuck .aw-nav-bar {
+  max-width: 1180px;
+  padding: 9px 10px 9px 16px;
+  background: rgba(20,23,22,.62);
+  border-color: rgba(255,255,255,.1);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  box-shadow: 0 20px 48px -26px rgba(0,0,0,.95);
+}
+.aw-nav.is-stuck .aw-nav-logo img { width: 30px; height: 30px; }
+.aw-nav.is-stuck .aw-nav-links { gap: 0; }
+
+@media (max-width: 1100px) {
+  .aw-nav-links { display: none; }
+  .aw-nav-bar { max-width: 100%; }
+  .aw-nav.is-stuck .aw-nav-bar { max-width: 100%; }
+  .aw-nav-cta { margin-left: auto; }
+}
+@media (max-width: 520px) {
+  .aw-nav { padding: 14px 16px; }
+  .aw-nav-logo span { display: none; }
+}
+
+/* ---------- hero a pantalla completa ---------- */
+#hero { min-height: 100svh; display: flex; align-items: center; padding: 132px 24px 88px; }
+#hero > div:last-child { width: 100%; }
+#hero h1 { font-size: clamp(40px, 4.7vw, 68px); }
+/* pantallas bajas: el hero sigue cabiendo entero sin recortar los contadores */
+@media (max-height: 880px) and (min-width: 900px) {
+  #hero { padding-top: 104px; padding-bottom: 52px; }
+  #hero .hero-copy { gap: 16px; }
+  #hero h1 { font-size: clamp(38px, 3.8vw, 52px); }
+  #hero .hero-counts { gap: 40px; margin-top: 10px; }
+  #hero .hero-counts dd { font-size: 32px; }
+}
+@media (max-height: 740px) and (min-width: 900px) {
+  #hero { padding-top: 96px; padding-bottom: 40px; }
+  #hero .hero-copy { gap: 13px; }
+  #hero h1 { font-size: clamp(34px, 3.3vw, 46px); }
+  #hero .hero-counts { gap: 32px; margin-top: 4px; }
+  #hero .hero-counts dd { font-size: 28px; }
+  #hero .hero-counts dt { margin-bottom: 3px; font-size: 12px; }
+}

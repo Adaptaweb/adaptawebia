@@ -170,7 +170,8 @@ class Landing {
       if (document.getElementById('aw-car') && !this._carUp) { this._carUp = true; this._initCar(); }
       if (document.getElementById("aw-rail") && !this._railUp) { this._railUp = true; this._initRail(); }
       if (document.querySelector(".qa-panel") && !this._faqUp) { this._faqUp = true; this._initFaq(); }
-      if (this._foilUp && this._expUp && this._carUp && this._railUp && this._faqUp) return;
+      if (document.getElementById("aw-nav") && !this._navUp) { this._navUp = true; this._initNav(); }
+      if (this._foilUp && this._expUp && this._carUp && this._railUp && this._faqUp && this._navUp) return;
       if (tries++ < 180) requestAnimationFrame(boot);
     };
     boot();
@@ -185,6 +186,7 @@ class Landing {
     if (this._expObs) this._expObs.disconnect();
     if (this._carObs) this._carObs.disconnect();
     if (this._railObs) this._railObs.disconnect();
+    if (this._onScroll) window.removeEventListener("scroll", this._onScroll);
   }
 
   _initFoil(canvas) {
@@ -473,6 +475,22 @@ class Landing {
     } else {
       replay();
     }
+  }
+
+  /** La barra se contrae en cuanto el hero deja de mandar. */
+  _initNav() {
+    const nav = document.getElementById("aw-nav");
+    if (!nav) return;
+    let last = null;
+    const sync = function () {
+      const stuck = window.scrollY > 64;
+      if (stuck === last) return;
+      last = stuck;
+      nav.classList.toggle("is-stuck", stuck);
+    };
+    this._onScroll = function () { window.requestAnimationFrame(sync); };
+    window.addEventListener("scroll", this._onScroll, { passive: true });
+    sync();
   }
 
   _initFaq() {

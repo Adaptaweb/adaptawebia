@@ -1,17 +1,21 @@
 <!-- ============ NAV ============ -->
-<header style="position: sticky; top: 0; z-index: 50; padding: 16px 24px">
-  <nav class="glass" style="margin: 0 auto; max-width: 1200px; border-radius: 999px; padding: 9px 12px 9px 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
-    <a href="#hero" style="display: flex; align-items: center; gap: 10px; color: #F5F5F7; text-decoration: none; font-weight: 700; letter-spacing: -.02em; font-size: 17px">
-      <span aria-hidden="true" style="display: inline-flex; width: 30px; height: 30px; border-radius: 10px; background: linear-gradient(140deg, #A6FFC8, #12B350); color: #04150B; align-items: center; justify-content: center; font-weight: 800; font-size: 15px">A</span>
-      AdaptaWeb <span style="color: #45FF8C">IA</span>
+<!-- En el hero va abierta de lado a lado y sin fondo; al hacer scroll se contrae
+     en la píldora de cristal. El estado lo pone initLanding() con la clase is-stuck. -->
+<header class="aw-nav" id="aw-nav">
+  <nav class="aw-nav-bar">
+    <a class="aw-nav-logo" href="#hero">
+      <img src="/logo.webp" width="34" height="34" alt="AdaptaWeb" />
+      <span>AdaptaWeb <span style="color: #45FF8C">IA</span></span>
     </a>
-    <span style="flex: 1 1 20px"></span>
-    <a class="ul" href="#servicios" style="color: #C9C9CE; text-decoration: none; font-size: 15px; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center">Servicios</a>
-    <a class="ul" href="#trabajo" style="color: #C9C9CE; text-decoration: none; font-size: 15px; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center">Trabajo real</a>
-    <a class="ul" href="#proceso" style="color: #C9C9CE; text-decoration: none; font-size: 15px; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center">Proceso</a>
-    <a class="ul" href="#stack" style="color: #C9C9CE; text-decoration: none; font-size: 15px; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center">Comparativa</a>
-    <a class="ul" href="#faq" style="color: #C9C9CE; text-decoration: none; font-size: 15px; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center">Dudas</a>
-    <a class="btn" href="#cotizar" style="background: #45FF8C; color: #04150B; text-decoration: none; font-weight: 650; font-size: 15px; border-radius: 999px; padding: 0 22px; min-height: 44px; display: inline-flex; align-items: center; box-shadow: 0 10px 34px -12px rgba(69,255,140,.7)">Cotizar proyecto</a>
+
+    <div class="aw-nav-links">
+      <a class="ul" href="#servicios">Servicios</a>
+      <a class="ul" href="#trabajo">Trabajo real</a>
+      <a class="ul" href="#proceso">Proceso</a>
+      <a class="ul" href="#stack">Comparativa</a>
+      <a class="ul" href="#faq">Dudas</a>
+    </div>
+
+    <a class="btn aw-nav-cta" href="#cotizar">Cotizar proyecto</a>
   </nav>
 </header>
-
