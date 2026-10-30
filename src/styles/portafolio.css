@@ -22,7 +22,7 @@
 /* ---------- la reja de proyectos ---------- */
 .pf-grid {
   margin: 0 0 96px; padding: 0; list-style: none;
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 24px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr)); gap: 24px;
 }
 .pf-card { min-width: 0; }
 .aw-landing .pf-card > a {
@@ -121,8 +121,8 @@
 .aw-landing .cs-live:hover { background: rgba(69,255,140,.1); border-color: rgba(69,255,140,.6); }
 
 .cs-demos { margin: 52px 0 72px; }
-.cs-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 22px; }
-.cs-row.dos { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: start; }
+.cs-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr)); gap: 22px; }
+.cs-row.dos { grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); align-items: start; }
 
 .cs-bloque { margin-bottom: 64px; }
 .cs-label {
@@ -137,13 +137,13 @@
 .cs-lista li { display: flex; gap: 13px; font-size: 16px; line-height: 1.6; color: #C9C9CE; }
 .cs-lista li::before { content: ""; flex: none; width: 6px; height: 6px; margin-top: 10px; border-radius: 50%; background: #45FF8C; }
 
-.cs-detalles { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
+.cs-detalles { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(290px, 100%), 1fr)); gap: 18px; }
 .cs-detalles li { border-radius: 20px; border: 1px solid rgba(255,255,255,.1); background: rgba(20,23,22,.6); padding: 24px; }
 .cs-detalles h3 { margin: 0 0 9px; font-size: 17px; font-weight: 700; letter-spacing: -.02em; color: #F5F5F7; }
 .cs-detalles p { margin: 0; font-size: 15px; line-height: 1.6; color: #A1A1A6; }
 
 /* La arquitectura, en tres columnas: quién llama, qué responde, dónde vive. */
-.cs-arq { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+.cs-arq { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 18px; }
 .cs-col h3 { margin: 0 0 12px; font-family: "Space Mono", monospace; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: #6B7A72; }
 .cs-col ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
 .cs-nodo { border-radius: 16px; border: 1px solid rgba(255,255,255,.1); background: rgba(20,23,22,.5); padding: 15px 17px; }
