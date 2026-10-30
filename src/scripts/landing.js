@@ -171,7 +171,8 @@ class Landing {
       if (document.getElementById("aw-rail") && !this._railUp) { this._railUp = true; this._initRail(); }
       if (document.querySelector(".qa-panel") && !this._faqUp) { this._faqUp = true; this._initFaq(); }
       if (document.getElementById("aw-nav") && !this._navUp) { this._navUp = true; this._initNav(); }
-      if (this._foilUp && this._expUp && this._carUp && this._railUp && this._faqUp && this._navUp) return;
+      if (document.getElementById("aw-burger") && !this._menuUp) { this._menuUp = true; this._initMenu(); }
+      if (this._foilUp && this._expUp && this._carUp && this._railUp && this._faqUp && this._navUp && this._menuUp) return;
       if (tries++ < 180) requestAnimationFrame(boot);
     };
     boot();
@@ -187,6 +188,9 @@ class Landing {
     if (this._carObs) this._carObs.disconnect();
     if (this._railObs) this._railObs.disconnect();
     if (this._onScroll) window.removeEventListener("scroll", this._onScroll);
+    if (this._onMenuKey) document.removeEventListener("keydown", this._onMenuKey);
+    if (this._onMenuResize) window.removeEventListener("resize", this._onMenuResize);
+    document.documentElement.classList.remove("aw-menu-open");
   }
 
   _initFoil(canvas) {
@@ -491,6 +495,63 @@ class Landing {
     this._onScroll = function () { window.requestAnimationFrame(sync); };
     window.addEventListener("scroll", this._onScroll, { passive: true });
     sync();
+  }
+
+  _initMenu() {
+    const burger = document.getElementById("aw-burger");
+    const menu = document.getElementById("aw-menu");
+    if (!burger || !menu) return;
+    const root = document.documentElement;
+
+    const set = function (open) {
+      menu.classList.toggle("is-open", open);
+      burger.setAttribute("aria-expanded", open ? "true" : "false");
+      burger.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+      root.classList.toggle("aw-menu-open", open);
+      // inert saca del foco y del lector lo que hay dentro mientras está cerrado
+      if (open) menu.removeAttribute("inert");
+      else menu.setAttribute("inert", "");
+      // El panel sale de visibility: hidden, y mientras dura esa transicion el
+      // enlace todavia no acepta el foco: se mueve al terminar de aparecer.
+      if (open) {
+        let movido = false;
+        const mover = function () {
+          if (movido) return;
+          movido = true;
+          menu.removeEventListener("transitionend", alTerminar);
+          const first = menu.querySelector("a");
+          if (first) first.focus();
+        };
+        const alTerminar = function (ev) {
+          if (ev.target === menu && ev.propertyName === "opacity") mover();
+        };
+        menu.addEventListener("transitionend", alTerminar);
+        window.setTimeout(mover, 450);
+      }
+    };
+
+    burger.addEventListener("click", function () {
+      set(!menu.classList.contains("is-open"));
+    });
+
+    // Cualquier enlace del panel lleva a una sección de esta misma página
+    menu.addEventListener("click", function (ev) {
+      if (ev.target.closest("a")) set(false);
+    });
+
+    this._onMenuKey = function (ev) {
+      if (ev.key === "Escape" && menu.classList.contains("is-open")) {
+        set(false);
+        burger.focus();
+      }
+    };
+    document.addEventListener("keydown", this._onMenuKey);
+
+    // Al pasar a escritorio los enlaces vuelven a la barra: el panel sobra
+    this._onMenuResize = function () {
+      if (window.innerWidth > 1100 && menu.classList.contains("is-open")) set(false);
+    };
+    window.addEventListener("resize", this._onMenuResize);
   }
 
   _initFaq() {

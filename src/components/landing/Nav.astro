@@ -1,10 +1,19 @@
 ---
 import Logo from "../Logo.astro";
+
+const enlaces = [
+  { href: "#servicios", texto: "Servicios" },
+  { href: "#trabajo", texto: "Trabajo real" },
+  { href: "#proceso", texto: "Proceso" },
+  { href: "#stack", texto: "Comparativa" },
+  { href: "#faq", texto: "Dudas" },
+];
 ---
 
 <!-- ============ NAV ============ -->
 <!-- En el hero va abierta de lado a lado y sin fondo; al hacer scroll se contrae
-     en la píldora de cristal. El estado lo pone initLanding() con la clase is-stuck. -->
+     en la píldora de cristal. El estado lo pone initLanding() con la clase is-stuck.
+     Bajo 1100px los enlaces se mudan al panel #aw-menu, que abre el botón. -->
 <header class="aw-nav" id="aw-nav">
   <nav class="aw-nav-bar">
     <a class="aw-nav-logo" href="#hero">
@@ -12,13 +21,22 @@ import Logo from "../Logo.astro";
     </a>
 
     <div class="aw-nav-links">
-      <a class="ul" href="#servicios">Servicios</a>
-      <a class="ul" href="#trabajo">Trabajo real</a>
-      <a class="ul" href="#proceso">Proceso</a>
-      <a class="ul" href="#stack">Comparativa</a>
-      <a class="ul" href="#faq">Dudas</a>
+      {enlaces.map((e) => <a class="ul" href={e.href}>{e.texto}</a>)}
     </div>
 
     <a class="btn aw-nav-cta" href="#cotizar">Cotizar proyecto</a>
+
+    <button class="aw-burger" id="aw-burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="aw-menu">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
   </nav>
 </header>
+
+<div class="aw-menu" id="aw-menu" inert>
+  <nav class="aw-menu-in" aria-label="Menú principal">
+    {enlaces.map((e, i) => <a href={e.href} style={`--d: ${0.05 + i * 0.05}s`}>{e.texto}</a>)}
+    <a class="aw-menu-cta" href="#cotizar" style={`--d: ${0.05 + enlaces.length * 0.05}s`}>Cotizar proyecto</a>
+    <a class="aw-menu-mail" href="mailto:hola@adaptaweb.cl" style={`--d: ${0.1 + enlaces.length * 0.05}s`}>hola@adaptaweb.cl</a>
+  </nav>
+</div>
