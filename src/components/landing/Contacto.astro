@@ -1,3 +1,9 @@
+---
+// La clave publica de Turnstile vive en Vercel. Sin ella no se pinta el
+// widget y el formulario avisa en vez de fallar en silencio.
+const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+---
+
 <!-- ============ CONTACTO ============ -->
 <!-- El degradado vive en este envoltorio, no en la seccion, para que empiece
      arriba de la onda: asi el verde cruza la curva sin corte. La onda solo
@@ -38,23 +44,23 @@
     </div>
 
     <div style="flex: 1.15 1 560px; min-width: 0">
-      <form class="t3 d1 glass" style="width: 100%; border-radius: 28px; padding: 32px; display: flex; flex-direction: column; gap: 22px">
+      <form class="t3 d1 glass" id="aw-form" data-sitekey={turnstileKey} style="width: 100%; border-radius: 28px; padding: 32px; display: flex; flex-direction: column; gap: 22px">
 
         <fieldset style="border: none; margin: 0; padding: 0">
           <legend style="padding: 0; margin: 0 0 12px; font-size: 13px; font-weight: 500; color: #A1A1A6">¿Qué necesitas?</legend>
           <div style="display: flex; flex-wrap: wrap; gap: 9px">
-            <input class="pill-in" type="radio" name="tipo" id="t-web" checked><label class="pill" for="t-web">Web a medida</label>
-            <input class="pill-in" type="radio" name="tipo" id="t-app"><label class="pill" for="t-app">App móvil</label>
-            <input class="pill-in" type="radio" name="tipo" id="t-sis"><label class="pill" for="t-sis">Sistema interno</label>
-            <input class="pill-in" type="radio" name="tipo" id="t-api"><label class="pill" for="t-api">Integración o API</label>
-            <input class="pill-in" type="radio" name="tipo" id="t-otro"><label class="pill" for="t-otro">Todavía no lo sé</label>
+            <input class="pill-in" type="radio" name="tipo" id="t-web" value="web" checked><label class="pill" for="t-web">Web a medida</label>
+            <input class="pill-in" type="radio" name="tipo" id="t-app" value="app-movil"><label class="pill" for="t-app">App móvil</label>
+            <input class="pill-in" type="radio" name="tipo" id="t-sis" value="sistema-interno"><label class="pill" for="t-sis">Sistema interno</label>
+            <input class="pill-in" type="radio" name="tipo" id="t-api" value="integracion-api"><label class="pill" for="t-api">Integración o API</label>
+            <input class="pill-in" type="radio" name="tipo" id="t-otro" value="sin-definir"><label class="pill" for="t-otro">Todavía no lo sé</label>
           </div>
         </fieldset>
 
         <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px">
           <span style="display: flex; flex-direction: column; gap: 8px">
             <label for="c-nombre" style="font-size: 13px; font-weight: 500; color: #A1A1A6">Nombre</label>
-            <input class="inp" id="c-nombre" name="nombre" type="text" autocomplete="name" placeholder="Tu nombre" style="width: 100%; min-height: 52px; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.3); padding: 0 16px; font-size: 16px; font-family: inherit; color: #F5F5F7">
+            <input class="inp" id="c-nombre" required name="nombre" type="text" autocomplete="name" placeholder="Tu nombre" style="width: 100%; min-height: 52px; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.3); padding: 0 16px; font-size: 16px; font-family: inherit; color: #F5F5F7">
           </span>
           <span style="display: flex; flex-direction: column; gap: 8px">
             <label for="c-empresa" style="font-size: 13px; font-weight: 500; color: #A1A1A6">Empresa <span style="color: #6B6B70">· opcional</span></label>
@@ -65,7 +71,7 @@
         <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px">
           <span style="display: flex; flex-direction: column; gap: 8px">
             <label for="c-email" style="font-size: 13px; font-weight: 500; color: #A1A1A6">Email</label>
-            <input class="inp" id="c-email" name="email" type="email" autocomplete="email" placeholder="tu@email.com" style="width: 100%; min-height: 52px; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.3); padding: 0 16px; font-size: 16px; font-family: inherit; color: #F5F5F7">
+            <input class="inp" id="c-email" required name="email" type="email" autocomplete="email" placeholder="tu@email.com" style="width: 100%; min-height: 52px; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.3); padding: 0 16px; font-size: 16px; font-family: inherit; color: #F5F5F7">
           </span>
           <span style="display: flex; flex-direction: column; gap: 8px">
             <label for="c-fono" style="font-size: 13px; font-weight: 500; color: #A1A1A6">Teléfono <span style="color: #6B6B70">· opcional</span></label>
@@ -75,17 +81,27 @@
 
         <span style="display: flex; flex-direction: column; gap: 8px">
           <label for="c-mensaje" style="font-size: 13px; font-weight: 500; color: #A1A1A6">Cuéntanos del proyecto</label>
-          <textarea class="inp" id="c-mensaje" name="mensaje" rows="5" placeholder="Qué hace tu negocio, qué se hace hoy a mano y qué te gustaría que el sistema resolviera." style="width: 100%; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.3); padding: 14px 16px; font-size: 16px; font-family: inherit; line-height: 1.55; color: #F5F5F7; resize: vertical"></textarea>
+          <textarea class="inp" id="c-mensaje" required name="mensaje" rows="5" placeholder="Qué hace tu negocio, qué se hace hoy a mano y qué te gustaría que el sistema resolviera." style="width: 100%; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.3); padding: 14px 16px; font-size: 16px; font-family: inherit; line-height: 1.55; color: #F5F5F7; resize: vertical"></textarea>
         </span>
+
+        <div id="c-turnstile"></div>
+
+        <p class="form-msg" id="c-msg" role="status" aria-live="polite" hidden></p>
 
         <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 4px">
           <p style="margin: 0; max-width: 32ch; font-size: 13px; line-height: 1.5; color: #6B6B70">Usamos tus datos solo para responderte. No hay listas ni terceros.</p>
-          <button class="btn" type="submit" style="border: none; cursor: pointer; background: #45FF8C; color: #04150B; font-family: inherit; font-weight: 700; font-size: 16px; border-radius: 999px; padding: 0 30px; min-height: 54px; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 16px 48px -14px rgba(69,255,140,.8)">
-            Enviar mensaje
+          <button class="btn" id="c-send" type="submit" style="border: none; cursor: pointer; background: #45FF8C; color: #04150B; font-family: inherit; font-weight: 700; font-size: 16px; border-radius: 999px; padding: 0 30px; min-height: 54px; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 16px 48px -14px rgba(69,255,140,.8)">
+            <span id="c-send-t">Enviar mensaje</span>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
           </button>
         </div>
       </form>
+
+      <div class="form-ok" id="c-ok" hidden>
+        <span class="form-ok-ico" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L19 7"></path></svg></span>
+        <h3>Mensaje recibido</h3>
+        <p>Te respondemos en menos de 24 horas hábiles. Si es urgente, escríbenos por <a href="https://wa.me/56900000000" target="_blank" rel="noopener noreferrer">WhatsApp</a>.</p>
+      </div>
     </div>
 
   </div>
@@ -99,3 +115,5 @@
     <path d="M0,78 C240,146 480,10 720,78 C960,146 1200,10 1440,78" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1.5" vector-effect="non-scaling-stroke"></path>
   </svg>
 </div>
+
+{turnstileKey && <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>}

@@ -5,9 +5,19 @@ interface ContactBody {
   name: string;
   company: string;
   email: string;
+  phone?: string;
+  projectType?: string;
   message: string;
   turnstileToken: string;
 }
+
+const TIPOS: Record<string, string> = {
+  web: 'Web a medida',
+  'app-movil': 'App movil',
+  'sistema-interno': 'Sistema interno',
+  'integracion-api': 'Integracion o API',
+  'sin-definir': 'Todavia no lo sabe',
+};
 
 interface TurnstileResponse {
   success: boolean;
@@ -17,7 +27,7 @@ interface TurnstileResponse {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body: ContactBody = await request.json();
-    const { name, company, email, message, turnstileToken } = body;
+    const { name, company, email, phone, projectType, message, turnstileToken } = body;
 
     if (!name?.trim() || !email?.trim() || !message?.trim() || !turnstileToken) {
       return new Response(
@@ -105,6 +115,18 @@ export const POST: APIRoute = async ({ request }) => {
                               <td style="padding:14px 18px;background-color:#1a1a1a;">
                                 <p style="margin:0;font-size:11px;color:#666666;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Empresa</p>
                                 <p style="margin:4px 0 0;font-size:15px;color:#ffffff;font-weight:500;">${company}</p>
+                              </td>
+                            </tr>` : ''}
+                            ${phone ? `<tr>
+                              <td style="padding:14px 18px;background-color:#1a1a1a;">
+                                <p style="margin:0;font-size:11px;color:#666666;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Telefono</p>
+                                <p style="margin:4px 0 0;font-size:15px;color:#ffffff;font-weight:500;">${phone}</p>
+                              </td>
+                            </tr>` : ''}
+                            ${projectType && TIPOS[projectType] ? `<tr>
+                              <td style="padding:14px 18px;background-color:#1a1a1a;">
+                                <p style="margin:0;font-size:11px;color:#666666;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Que necesita</p>
+                                <p style="margin:4px 0 0;font-size:15px;color:#ffffff;font-weight:500;">${TIPOS[projectType]}</p>
                               </td>
                             </tr>` : ''}
                             <tr>

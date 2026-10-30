@@ -172,7 +172,8 @@ class Landing {
       if (document.querySelector(".qa-panel") && !this._faqUp) { this._faqUp = true; this._initFaq(); }
       if (document.getElementById("aw-nav") && !this._navUp) { this._navUp = true; this._initNav(); }
       if (document.getElementById("aw-burger") && !this._menuUp) { this._menuUp = true; this._initMenu(); }
-      if (this._foilUp && this._expUp && this._carUp && this._railUp && this._faqUp && this._navUp && this._menuUp) return;
+      if (document.getElementById("aw-form") && !this._formUp) { this._formUp = true; this._initForm(); }
+      if (this._foilUp && this._expUp && this._carUp && this._railUp && this._faqUp && this._navUp && this._menuUp && this._formUp) return;
       if (tries++ < 180) requestAnimationFrame(boot);
     };
     boot();
@@ -552,6 +553,111 @@ class Landing {
       if (window.innerWidth > 1100 && menu.classList.contains("is-open")) set(false);
     };
     window.addEventListener("resize", this._onMenuResize);
+  }
+
+  _initForm() {
+    const form = document.getElementById("aw-form");
+    const caja = document.getElementById("c-turnstile");
+    const aviso = document.getElementById("c-msg");
+    const boton = document.getElementById("c-send");
+    const exito = document.getElementById("c-ok");
+    const etiqueta = document.getElementById("c-send-t");
+    if (!form || !boton) return;
+
+    const clave = form.dataset.sitekey || "";
+    let token = null;
+    let widget = null;
+    let enviando = false;
+
+    const decir = function (texto, tono) {
+      if (!aviso) return;
+      aviso.textContent = texto || "";
+      aviso.className = "form-msg" + (tono ? " is-" + tono : "");
+      aviso.hidden = !texto;
+    };
+
+    // Turnstile se pinta a mano para poder recuperar el token y reiniciarlo
+    // cuando un envio falla: el de un intento no sirve para el siguiente.
+    const pintar = function () {
+      if (!clave || !caja || !window.turnstile || widget !== null) return;
+      widget = window.turnstile.render(caja, {
+        sitekey: clave,
+        theme: "dark",
+        callback: function (t) { token = t; decir("", null); },
+        "expired-callback": function () { token = null; },
+        "error-callback": function () {
+          token = null;
+          decir("No se pudo cargar la verificación. Recarga la página o escríbenos a hola@adaptaweb.cl.", "mal");
+        },
+      });
+    };
+
+    if (clave) {
+      let intentos = 0;
+      const esperar = function () {
+        if (window.turnstile) { pintar(); return; }
+        if (intentos++ < 200) window.setTimeout(esperar, 100);
+        else decir("No se pudo cargar la verificación. Escríbenos a hola@adaptaweb.cl.", "mal");
+      };
+      esperar();
+    }
+
+    form.addEventListener("submit", async function (ev) {
+      ev.preventDefault();
+      if (enviando) return;
+
+      if (!token) {
+        decir(clave
+          ? "Falta completar la verificación de seguridad."
+          : "El formulario no está disponible ahora mismo. Escríbenos a hola@adaptaweb.cl.", "mal");
+        return;
+      }
+
+      const datos = new FormData(form);
+      enviando = true;
+      boton.disabled = true;
+      // Solo la etiqueta: tocar el textContent del boton borraria la flecha
+      if (etiqueta) etiqueta.textContent = "Enviando…";
+      decir("", null);
+
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: (datos.get("nombre") || "").trim(),
+            company: (datos.get("empresa") || "").trim(),
+            email: (datos.get("email") || "").trim(),
+            phone: (datos.get("telefono") || "").trim(),
+            projectType: datos.get("tipo") || "",
+            message: (datos.get("mensaje") || "").trim(),
+            turnstileToken: token,
+          }),
+        });
+        const cuerpo = await res.json().catch(function () { return {}; });
+
+        if (!res.ok) {
+          decir(cuerpo.error || "No pudimos enviar tu mensaje. Intenta de nuevo.", "mal");
+          return;
+        }
+
+        form.hidden = true;
+        if (exito) {
+          exito.hidden = false;
+          exito.setAttribute("tabindex", "-1");
+          exito.focus();
+        }
+      } catch (err) {
+        decir("Hubo un problema de conexión. Intenta de nuevo o escríbenos a hola@adaptaweb.cl.", "mal");
+      } finally {
+        enviando = false;
+        boton.disabled = false;
+        if (etiqueta) etiqueta.textContent = "Enviar mensaje";
+        // El token se quema en cada intento, valga o no
+        token = null;
+        if (widget !== null && window.turnstile) window.turnstile.reset(widget);
+      }
+    });
   }
 
   _initFaq() {
