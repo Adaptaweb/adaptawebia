@@ -1,5 +1,14 @@
 <!-- ============ CONTACTO ============ -->
-<section id="contacto" style="position: relative; background: radial-gradient(120% 78% at 50% 16%, rgba(69,255,140,.15), rgba(69,255,140,0) 62%), linear-gradient(180deg, #0A1711 0%, #07080A 34%); padding: 56px 24px 96px; overflow: hidden">
+<!-- El degradado vive en este envoltorio, no en la seccion, para que empiece
+     arriba de la onda: asi el verde cruza la curva sin corte. La onda solo
+     pinta el lado de preguntas y deja pasar el fondo por debajo. -->
+<div style="position: relative; background: radial-gradient(120% 78% at 50% 16%, rgba(69,255,140,.15), rgba(69,255,140,0) 62%), linear-gradient(180deg, #0A1711 0%, #07080A 34%)">
+
+  <div aria-hidden="true" style="position: relative; height: 166px; overflow: hidden; margin-top: -2px">
+    <svg class="wave w-solo" viewBox="0 0 1440 164" preserveAspectRatio="none" style="top: 0"><path d="M0,78 C240,146 480,10 720,78 C960,146 1200,10 1440,78 L1440,0 L0,0 Z" fill="#F3F5F4"></path></svg>
+  </div>
+
+<section id="contacto" style="position: relative; padding: 56px 24px 96px; overflow: hidden">
 
   <div style="position: relative; margin: 0 auto; max-width: 1240px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 60px">
 
@@ -81,6 +90,7 @@
 
   </div>
 </section>
+</div>
 
 <!-- onda: contacto → pie -->
 <div aria-hidden="true" style="position: relative; height: 164px; background: #07080A; overflow: hidden; margin-top: -1px">
