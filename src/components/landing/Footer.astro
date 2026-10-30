@@ -1,5 +1,39 @@
 ---
 import Logo from "../Logo.astro";
+import * as simpleIcons from "simple-icons";
+
+// Marcas de simple-icons (CC0). Solo entran las piezas del stack que tienen
+// logotipo propio; las librerias sin marca (Riverpod, Drift, go_router,
+// Alembic, Uvicorn, Vosk y companhia) se quedan fuera de la marquesina.
+const porSlug = new Map(
+  Object.values(simpleIcons)
+    .filter((i) => i && typeof i === "object" && "slug" in i)
+    .map((i) => [i.slug, i]),
+);
+
+// Un logotipo casi negro se pierde sobre el pie, asi que ahi se usa blanco.
+function marca(slug) {
+  const icono = porSlug.get(slug);
+  if (!icono) throw new Error(`simple-icons no trae "${slug}"`);
+  const canal = (i) => {
+    const c = parseInt(icono.hex.slice(i, i + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  const luz = 0.2126 * canal(0) + 0.7152 * canal(2) + 0.0722 * canal(4);
+  return { ...icono, color: luz < 0.12 ? "#FFFFFF" : `#${icono.hex}` };
+}
+
+const filaA = [
+  "astro", "react", "typescript", "tailwindcss", "vite", "shadcnui", "baseui",
+  "framer", "threedotjs", "konva", "tanstack", "reacthookform", "zod", "pwa",
+  "flutter", "dart", "firebase",
+].map(marca);
+
+const filaB = [
+  "python", "fastapi", "sqlalchemy", "nodedotjs", "express", "medusa",
+  "postgresql", "supabase", "mongodb", "redis", "sqlite", "googlegemini",
+  "docker", "cloudflare", "vercel", "resend", "github",
+].map(marca);
 ---
 
 <!-- ============ FOOTER ============ -->
@@ -7,24 +41,26 @@ import Logo from "../Logo.astro";
   <div style="margin: 0 auto; max-width: 1400px">
 
     <div aria-hidden="true" style="margin-bottom: 48px">
-      <p style="margin: 0 0 16px; text-align: center; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: #4A4A4F">48 piezas en proyectos reales</p>
-      <div class="mq-wrap" style="overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent)">
-        <div class="mq" style="gap: 34px; font-family: 'Space Mono', monospace; font-size: 14px; color: #45FF8C; opacity: .45">
-          <div style="display: flex; gap: 34px; padding-right: 34px; white-space: nowrap">
-            <span>Astro</span><span>React</span><span>TypeScript</span><span>Tailwind CSS v4</span><span>Vite</span><span>shadcn/ui</span><span>Base UI</span><span>Framer Motion</span><span>Three.js</span><span>React Three Fiber</span><span>Konva</span><span>Recharts</span><span>TanStack Table</span><span>React Hook Form + Zod</span><span>PWA</span><span>Flutter</span><span>Riverpod</span><span>Drift</span><span>sqflite</span><span>go_router</span><span>mobile_scanner</span><span>ML Kit OCR</span><span>local_auth</span><span>Firebase Messaging</span>
+      <p style="margin: 0 0 20px; text-align: center; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: #4A4A4F">Lo que usamos en proyectos reales</p>
+
+      <div class="mq-wrap">
+        <div class="mq">
+          <div class="mq-row">
+            {filaA.map((i) => <span class="tk" style={`--brand: ${i.color}`} title={i.title}><svg viewBox="0 0 24 24"><path d={i.path} /></svg></span>)}
           </div>
-          <div style="display: flex; gap: 34px; padding-right: 34px; white-space: nowrap">
-            <span>Astro</span><span>React</span><span>TypeScript</span><span>Tailwind CSS v4</span><span>Vite</span><span>shadcn/ui</span><span>Base UI</span><span>Framer Motion</span><span>Three.js</span><span>React Three Fiber</span><span>Konva</span><span>Recharts</span><span>TanStack Table</span><span>React Hook Form + Zod</span><span>PWA</span><span>Flutter</span><span>Riverpod</span><span>Drift</span><span>sqflite</span><span>go_router</span><span>mobile_scanner</span><span>ML Kit OCR</span><span>local_auth</span><span>Firebase Messaging</span>
+          <div class="mq-row">
+            {filaA.map((i) => <span class="tk" style={`--brand: ${i.color}`} title={i.title}><svg viewBox="0 0 24 24"><path d={i.path} /></svg></span>)}
           </div>
         </div>
       </div>
-      <div class="mq-wrap" style="overflow: hidden; margin-top: 12px; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent)">
-        <div class="mq mq-back" style="gap: 34px; font-family: 'Space Mono', monospace; font-size: 14px; color: #8E8E93; opacity: .5">
-          <div style="display: flex; gap: 34px; padding-right: 34px; white-space: nowrap">
-            <span>speech_to_text</span><span>share_plus</span><span>FastAPI</span><span>Uvicorn</span><span>SQLAlchemy</span><span>Alembic</span><span>Node.js</span><span>Express</span><span>Astro SSR</span><span>Medusa</span><span>PostgreSQL</span><span>Supabase</span><span>MongoDB</span><span>Redis</span><span>SQLite</span><span>Google Gemini</span><span>Vosk</span><span>Docker Compose</span><span>Cloudflare Workers</span><span>Wrangler</span><span>Vercel</span><span>Turnstile</span><span>Resend</span><span>Playwright</span>
+
+      <div class="mq-wrap" style="margin-top: 18px">
+        <div class="mq mq-back">
+          <div class="mq-row">
+            {filaB.map((i) => <span class="tk" style={`--brand: ${i.color}`} title={i.title}><svg viewBox="0 0 24 24"><path d={i.path} /></svg></span>)}
           </div>
-          <div style="display: flex; gap: 34px; padding-right: 34px; white-space: nowrap">
-            <span>speech_to_text</span><span>share_plus</span><span>FastAPI</span><span>Uvicorn</span><span>SQLAlchemy</span><span>Alembic</span><span>Node.js</span><span>Express</span><span>Astro SSR</span><span>Medusa</span><span>PostgreSQL</span><span>Supabase</span><span>MongoDB</span><span>Redis</span><span>SQLite</span><span>Google Gemini</span><span>Vosk</span><span>Docker Compose</span><span>Cloudflare Workers</span><span>Wrangler</span><span>Vercel</span><span>Turnstile</span><span>Resend</span><span>Playwright</span>
+          <div class="mq-row">
+            {filaB.map((i) => <span class="tk" style={`--brand: ${i.color}`} title={i.title}><svg viewBox="0 0 24 24"><path d={i.path} /></svg></span>)}
           </div>
         </div>
       </div>
