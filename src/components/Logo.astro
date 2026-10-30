@@ -1,10 +1,64 @@
 ---
 interface Props {
   class?: string;
+  /** mark: solo el monograma · horizontal: monograma, regla y nombre en fila · stacked: lockup vertical */
+  variant?: "mark" | "horizontal" | "stacked";
+  /** Alto del monograma en px; el resto del lockup se escala a partir de ahí. */
   size?: number;
 }
 
-const { class: className, size = 40 } = Astro.props;
+const { class: className, variant = "mark", size = 40 } = Astro.props;
+const markWidth = Math.round((size * 78) / 64);
+// Solo el monograma suelto necesita nombre accesible; en los lockups ya lo pone el texto.
+const labelled = variant === "mark";
 ---
 
-<img src="/logo.webp" width={size} height={size} alt="AdaptaWeb" class={className} />
+<span class:list={["aw-logo", `aw-logo--${variant}`, className]} style={`--aw-logo-h:${size}px`}>
+  <svg
+    class="aw-logo-mark"
+    viewBox="0 0 78 64"
+    width={markWidth}
+    height={size}
+    fill="none"
+    stroke-width="8.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    role={labelled ? "img" : undefined}
+    aria-label={labelled ? "AdaptaWeb" : undefined}
+    aria-hidden={labelled ? undefined : "true"}
+  >
+    <!-- La barra va antes del trazo para que los palos de la A le tapen los extremos. -->
+    <path d="M13 38 H35" stroke="var(--color-primary-400)"></path>
+    <path d="M6 54 L24 10 L42 54 L52 28 L62 54 L72 10" stroke="currentColor"></path>
+  </svg>
+  {variant !== "mark" && <span class="aw-logo-rule" aria-hidden="true"></span>}
+  {variant !== "mark" && <span class="aw-logo-word">AdaptaWeb</span>}
+</span>
+
+<style>
+  .aw-logo { display: inline-flex; align-items: center; color: inherit; }
+  .aw-logo-mark { display: block; }
+  .aw-logo-rule { display: block; background: var(--color-primary-400); border-radius: 2px; }
+  .aw-logo-word {
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    white-space: nowrap;
+    /* El tracking cuelga por la derecha; lo compensamos para que la palabra quede centrada. */
+    padding-left: 0.3em;
+  }
+
+  .aw-logo--stacked { flex-direction: column; gap: calc(var(--aw-logo-h) * 0.127); }
+  .aw-logo--stacked .aw-logo-rule { align-self: stretch; height: max(2px, calc(var(--aw-logo-h) * 0.027)); }
+  .aw-logo--stacked .aw-logo-word { font-size: calc(var(--aw-logo-h) * 0.155); }
+
+  .aw-logo--horizontal { flex-direction: row; gap: calc(var(--aw-logo-h) * 0.306); }
+  .aw-logo--horizontal .aw-logo-rule { width: 2px; height: calc(var(--aw-logo-h) * 0.722); }
+  .aw-logo--horizontal .aw-logo-word {
+    font-size: calc(var(--aw-logo-h) * 0.333);
+    letter-spacing: 0.26em;
+    padding-left: 0.26em;
+  }
+</style>

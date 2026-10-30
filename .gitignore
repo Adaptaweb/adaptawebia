@@ -39,3 +39,6 @@ Thumbs.db
 nul
 
 .vercel
+
+# indice local de codegraph
+.codegraph/

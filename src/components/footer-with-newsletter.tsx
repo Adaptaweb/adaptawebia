@@ -48,7 +48,22 @@ export default function FooterWithNewsletter() {
         >
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-center">
             <motion.div variants={itemVariants}>
-              <img src="/logo2.webp" alt="AdaptaWeb" className="h-10 md:h-9 w-auto grayscale hover:grayscale-0 transition-all duration-500" />
+              <span className="flex items-center gap-3 text-text-primary">
+                <svg
+                  aria-hidden="true"
+                  className="h-9 w-auto md:h-8"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={8.5}
+                  viewBox="0 0 78 64"
+                >
+                  <path d="M13 38 H35" stroke="var(--color-primary-400)" />
+                  <path d="M6 54 L24 10 L42 54 L52 28 L62 54 L72 10" stroke="currentColor" />
+                </svg>
+                <span aria-hidden="true" className="block h-6 w-0.5 rounded-full bg-primary-400" />
+                <span className="pl-[0.3em] text-sm font-medium tracking-[0.3em] uppercase">AdaptaWeb</span>
+              </span>
             </motion.div>
           </div>
 
