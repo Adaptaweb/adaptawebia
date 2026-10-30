@@ -1,11 +1,14 @@
+---
+import Logo from "../Logo.astro";
+---
+
 <!-- ============ NAV ============ -->
 <!-- En el hero va abierta de lado a lado y sin fondo; al hacer scroll se contrae
      en la píldora de cristal. El estado lo pone initLanding() con la clase is-stuck. -->
 <header class="aw-nav" id="aw-nav">
   <nav class="aw-nav-bar">
     <a class="aw-nav-logo" href="#hero">
-      <img src="/logo.webp" width="34" height="34" alt="AdaptaWeb" />
-      <span>AdaptaWeb</span>
+      <Logo variant="horizontal" size={36} />
     </a>
 
     <div class="aw-nav-links">
