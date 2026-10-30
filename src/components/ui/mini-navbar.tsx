@@ -56,9 +56,21 @@ export function MiniNavbar() {
         )}
       >
         <div className="flex items-center justify-between gap-2.5">
-          <a href="#hero" className="mr-2 flex items-center gap-2.5 select-none">
-            <img src="/logo.webp" alt="" className="h-7 w-7" />
-            <span className="text-sm font-semibold tracking-wide text-text-primary">ADAPTAWEB</span>
+          <a href="#hero" className="mr-2 flex items-center gap-2.5 select-none text-text-primary">
+            <svg
+              aria-hidden="true"
+              className="h-7 w-auto"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={8.5}
+              viewBox="0 0 78 64"
+            >
+              <path d="M13 38 H35" stroke="var(--color-primary-400)" />
+              <path d="M6 54 L24 10 L42 54 L52 28 L62 54 L72 10" stroke="currentColor" />
+            </svg>
+            <span aria-hidden="true" className="block h-[20px] w-0.5 rounded-full bg-primary-400" />
+            <span className="pl-[0.26em] text-[0.58rem] font-medium tracking-[0.26em] uppercase">AdaptaWeb</span>
           </a>
 
           <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">

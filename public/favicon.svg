@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="AdaptaWeb">
+  <rect width="64" height="64" rx="14" fill="#1F1F1F"/>
+  <g fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19.5 36 H38.5" stroke="#45FF8C"/>
+    <path d="M14 48 L29 14 L44 48" stroke="#F5F5F7"/>
+  </g>
+</svg>
