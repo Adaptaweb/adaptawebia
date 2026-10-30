@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Endpoints, no paginas
+Disallow: /api/
+
+Sitemap: https://adaptaweb.cl/sitemap-index.xml
