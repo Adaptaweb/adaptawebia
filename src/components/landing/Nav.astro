@@ -1,12 +1,16 @@
 ---
 import Logo from "../Logo.astro";
 
+// Fuera de la portada los anclajes necesitan la barra delante, o apuntan
+// a una seccion de la pagina en la que estamos.
+const raiz = Astro.url.pathname === "/" ? "" : "/";
+
 const enlaces = [
-  { href: "#servicios", texto: "Servicios" },
-  { href: "#trabajo", texto: "Trabajo real" },
-  { href: "#proceso", texto: "Proceso" },
-  { href: "#stack", texto: "Comparativa" },
-  { href: "#faq", texto: "Dudas" },
+  { href: `${raiz}#servicios`, texto: "Servicios" },
+  { href: `${raiz}#trabajo`, texto: "Trabajo real" },
+  { href: `${raiz}#proceso`, texto: "Proceso" },
+  { href: `${raiz}#stack`, texto: "Comparativa" },
+  { href: `${raiz}#faq`, texto: "Dudas" },
 ];
 ---
 
@@ -16,7 +20,7 @@ const enlaces = [
      Bajo 1100px los enlaces se mudan al panel #aw-menu, que abre el botón. -->
 <header class="aw-nav" id="aw-nav">
   <nav class="aw-nav-bar">
-    <a class="aw-nav-logo" href="#hero">
+    <a class="aw-nav-logo" href={`${raiz}#hero`}>
       <Logo variant="horizontal" size={36} />
     </a>
 
@@ -24,7 +28,7 @@ const enlaces = [
       {enlaces.map((e) => <a class="ul" href={e.href}>{e.texto}</a>)}
     </div>
 
-    <a class="btn aw-nav-cta" href="#cotizar">Cotizar proyecto</a>
+    <a class="btn aw-nav-cta" href={`${raiz}#cotizar`}>Cotizar proyecto</a>
 
     <button class="aw-burger" id="aw-burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="aw-menu">
       <span aria-hidden="true"></span>
@@ -36,7 +40,7 @@ const enlaces = [
 <div class="aw-menu" id="aw-menu" inert>
   <nav class="aw-menu-in" aria-label="Menú principal">
     {enlaces.map((e, i) => <a href={e.href} style={`--d: ${0.05 + i * 0.05}s`}>{e.texto}</a>)}
-    <a class="aw-menu-cta" href="#cotizar" style={`--d: ${0.05 + enlaces.length * 0.05}s`}>Cotizar proyecto</a>
+    <a class="aw-menu-cta" href={`${raiz}#cotizar`} style={`--d: ${0.05 + enlaces.length * 0.05}s`}>Cotizar proyecto</a>
     <a class="aw-menu-mail" href="mailto:hola@adaptaweb.cl" style={`--d: ${0.1 + enlaces.length * 0.05}s`}>hola@adaptaweb.cl</a>
   </nav>
 </div>

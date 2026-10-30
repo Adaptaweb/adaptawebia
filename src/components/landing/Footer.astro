@@ -2,6 +2,11 @@
 import Logo from "../Logo.astro";
 import * as simpleIcons from "simple-icons";
 
+// Fuera de la portada los anclajes necesitan la barra delante, o apuntan
+// a una seccion de la pagina en la que estamos.
+const raiz = Astro.url.pathname === "/" ? "" : "/";
+
+
 // Marcas de simple-icons (CC0). Solo entran las piezas del stack que tienen
 // logotipo propio; las librerias sin marca (Riverpod, Drift, go_router,
 // Alembic, Uvicorn, Vosk y companhia) se quedan fuera de la marquesina.
@@ -67,7 +72,7 @@ const filaB = [
     </div>
 
     <div style="display: flex; justify-content: center">
-      <a class="foot-logo" href="#hero" style="color: #F5F5F7; text-decoration: none">
+      <a class="foot-logo" href={`${raiz}#hero`} style="color: #F5F5F7; text-decoration: none">
         <Logo variant="stacked" size={72} />
       </a>
     </div>
@@ -88,14 +93,14 @@ const filaB = [
       </div>
 
       <nav class="fnav" aria-label="Pie de página" style="display: grid; grid-template-columns: repeat(2, auto); gap: 10px 64px; align-content: start">
-        <a href="#hero">Inicio</a>
-        <a href="#proceso">Así trabajamos</a>
-        <a href="#servicios">Servicios</a>
-        <a href="#stack">Comparativa</a>
-        <a href="#trabajo">Trabajo real</a>
-        <a href="#faq">Preguntas</a>
-        <a href="#cotizar">Cotizar</a>
-        <a href="#contacto">Contacto</a>
+        <a href={`${raiz}#hero`}>Inicio</a>
+        <a href={`${raiz}#proceso`}>Así trabajamos</a>
+        <a href={`${raiz}#servicios`}>Servicios</a>
+        <a href={`${raiz}#stack`}>Comparativa</a>
+        <a href={`${raiz}#trabajo`}>Trabajo real</a>
+        <a href={`${raiz}#faq`}>Preguntas</a>
+        <a href={`${raiz}#cotizar`}>Cotizar</a>
+        <a href={`${raiz}#contacto`}>Contacto</a>
       </nav>
     </div>
 

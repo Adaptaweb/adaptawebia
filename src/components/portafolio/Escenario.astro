@@ -1,0 +1,90 @@
+---
+// El fondo detrás de las demos es el mismo clip, ampliado y desenfocado,
+// reproduciéndose en sincronía con el primer video del escenario. Sigue los
+// cambios de clip y de tema, así que el fondo toma el color de lo que se ve
+// en pantalla. `backdrop` es la base del clip con el que arranca; cuando el
+// proyecto solo tiene una captura fija, se omite y queda el fondo plano.
+interface Props {
+  backdrop?: string;
+  class?: string;
+}
+
+const { backdrop, class: className } = Astro.props;
+---
+
+<div class:list={["stage", className]} data-stage>
+  {
+    backdrop && (
+      <video
+        class="backdrop"
+        data-stage-backdrop
+        src={`${backdrop}-claro.mp4`}
+        poster={`${backdrop}-claro.webp`}
+        muted
+        loop
+        playsinline
+        preload="none"
+        aria-hidden="true"
+        tabindex="-1"
+      />
+    )
+  }
+  <div class="content"><slot /></div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-stage]").forEach((stage) => {
+    const backdrop = stage.querySelector<HTMLVideoElement>("[data-stage-backdrop]");
+    const leader = stage.querySelector<HTMLVideoElement>(".content video");
+    if (!backdrop || !leader) return;
+
+    const follow = () => {
+      if (backdrop.getAttribute("src") !== leader.getAttribute("src")) {
+        backdrop.poster = leader.poster;
+        backdrop.src = leader.getAttribute("src") ?? "";
+      }
+      if (leader.paused) backdrop.pause();
+      else backdrop.play().catch(() => {});
+    };
+    const sync = () => {
+      if (Math.abs(backdrop.currentTime - leader.currentTime) > 0.3) {
+        backdrop.currentTime = leader.currentTime;
+      }
+    };
+
+    // Los cambios de clip y de tema reescriben el src del video guía.
+    new MutationObserver(follow).observe(leader, {
+      attributes: true,
+      attributeFilter: ["src", "poster"],
+    });
+    leader.addEventListener("play", follow);
+    leader.addEventListener("pause", follow);
+    leader.addEventListener("seeked", sync);
+    leader.addEventListener("timeupdate", sync);
+    backdrop.addEventListener("loadeddata", sync);
+  });
+</script>
+
+<style>
+  .stage {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #0c0d0f;
+    isolation: isolate;
+  }
+  .backdrop {
+    position: absolute;
+    inset: -60px;
+    z-index: -1;
+    width: calc(100% + 120px);
+    height: calc(100% + 120px);
+    max-width: none;
+    object-fit: cover;
+    filter: blur(46px);
+    transform: scale(1.1);
+    pointer-events: none;
+  }
+  .content { padding: clamp(20px, 3.5vw, 48px); }
+</style>

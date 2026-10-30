@@ -1,0 +1,117 @@
+---
+// Zona de demos cuyas capturas pueden verse en su versión clara u oscura
+// (la página sigue oscura). Selector: Auto, que alterna cada 10 s con el
+// barrido, Claro u Oscuro.
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["demos", className]} data-demo-mode="auto" data-phase="claro">
+  <div class="switch" role="radiogroup" aria-label="Tema de la demostración">
+    <button type="button" role="radio" aria-checked="true" data-mode="auto">Auto</button>
+    <button type="button" role="radio" aria-checked="false" data-mode="claro" aria-label="Claro">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6M18.7 18.7l-1.6-1.6M6.9 6.9 5.3 5.3"></path></svg>
+    </button>
+    <button type="button" role="radio" aria-checked="false" data-mode="oscuro" aria-label="Oscuro">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"></path></svg>
+    </button>
+  </div>
+  <slot />
+</div>
+
+<script>
+  import { loadClip, switchPhase, type Mode, type Phase } from "@/lib/demo-tema";
+
+  // Cada visita empieza en Auto; una elección manual dura lo que la página.
+  const AUTO_INTERVAL = 10_000;
+  const roots = [...document.querySelectorAll<HTMLElement>(".demos")];
+  const other = (p: Phase): Phase => (p === "claro" ? "oscuro" : "claro");
+  let mode: Mode = "auto";
+  let timer: number | undefined;
+
+  function setPhase(root: HTMLElement, phase: Phase) {
+    root.dataset.phase = phase;
+    root.querySelectorAll<HTMLVideoElement>("video[data-base]").forEach((v) => {
+      if (v.dataset.phase === phase) return;
+      if (v.paused) loadClip(v, v.dataset.base!, phase);
+      else switchPhase(v, phase);
+    });
+  }
+
+  function apply(next: Mode) {
+    mode = next;
+    for (const root of roots) {
+      root.dataset.demoMode = mode;
+      root
+        .querySelectorAll("[data-mode]")
+        .forEach((b) => b.setAttribute("aria-checked", String(b.getAttribute("data-mode") === mode)));
+      if (mode !== "auto") setPhase(root, mode);
+    }
+    clearInterval(timer);
+    if (mode === "auto") {
+      timer = window.setInterval(() => {
+        if (document.hidden) return;
+        roots.forEach((root) => setPhase(root, other((root.dataset.phase as Phase) ?? "claro")));
+      }, AUTO_INTERVAL);
+    }
+  }
+
+  for (const root of roots) {
+    root.querySelector(".switch")!.addEventListener("click", (e) => {
+      const button = (e.target as Element).closest<HTMLButtonElement>("[data-mode]");
+      if (button) apply(button.dataset.mode as Mode);
+    });
+  }
+  apply(mode);
+
+  // Las demos solo se reproducen mientras se ven; con preload="none" no
+  // descargan nada hasta entonces.
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach(({ target, isIntersecting }) => {
+          const v = target as HTMLVideoElement;
+          if (isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        }),
+      { threshold: 0.35 },
+    );
+    document.querySelectorAll<HTMLVideoElement>("video[data-autoplay]").forEach((v) => io.observe(v));
+  }
+</script>
+
+<style>
+  .demos { display: grid; gap: 12px; }
+  .demos > :global(.stage + .stage) { margin-top: 8px; }
+
+  .switch {
+    justify-self: end;
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgb(20 23 22 / 0.6);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+  }
+  .switch button {
+    display: grid;
+    place-items: center;
+    min-width: 40px;
+    height: 34px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background-color: transparent;
+    color: #8E8E93;
+    font: 600 12px "Space Mono", monospace;
+    cursor: pointer;
+    transition: color .3s, background-color .3s;
+  }
+  .switch button:hover { color: #F5F5F7; }
+  .switch button[aria-checked="true"] { background-color: #45FF8C; color: #04150B; }
+</style>

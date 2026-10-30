@@ -1,0 +1,475 @@
+[
+  {
+    "slug": "control-acceso-casino",
+    "name": "Plataforma Integral de Gestión Operacional, Accesos y Casino",
+    "shortName": "Control de Acceso y Casino",
+    "type": "Plataforma web + API + apps móviles",
+    "entity": "Proyecto propio",
+    "startDate": "2026-07",
+    "description": "Desarrollé de manera autónoma una solución tecnológica completa diseñada para optimizar la seguridad y operación en recintos de alto tráfico.",
+    "summary": "Solución completa desarrollada de forma autónoma: control en tiempo real de accesos (personas, vehículos y pasajeros) y consumos de casino, con un motor de validación central para el dashboard web y las apps Flutter con modo offline; incluye la migración de MongoDB a PostgreSQL y pruebas de carga con k6.",
+    "highlights": [
+      {
+        "title": "Control Operacional 360°",
+        "text": "Registro y validación en tiempo real de ingresos/salidas (personas, vehículos y pasajeros) y control de raciones/consumos en casino."
+      },
+      {
+        "title": "Ecosistema Multiplataforma",
+        "text": "Un único motor de validación centralizado que da servicio al dashboard web y a las aplicaciones móviles desarrolladas en Flutter para portería y casino."
+      },
+      {
+        "title": "Resiliencia Operativa (Offline)",
+        "text": "Catálogo sincronizado localmente que permite a las apps seguir validando eventos incluso sin conexión a internet."
+      },
+      {
+        "title": "Modernización e Infraestructura",
+        "text": "Migración estratégica de datos desde MongoDB a PostgreSQL para optimizar consultas relacionales y pruebas de carga con k6 para asegurar máxima escalabilidad y tolerancia al tráfico pesado."
+      }
+    ],
+    "uxDetails": [
+      {
+        "title": "Claro u oscuro según el lugar",
+        "text": "Toda la plataforma tiene modo claro y oscuro: legible tanto en una oficina iluminada como en una portería de noche."
+      },
+      {
+        "title": "Sigue funcionando sin red",
+        "text": "Si se cae la conexión en terreno, las apps siguen validando con el catálogo local; el usuario no tiene que hacer nada distinto."
+      },
+      {
+        "title": "Respuesta inmediata en casino",
+        "text": "La tablet muestra al instante si la marca es válida, si es un consumo repetido y el historial, para que la fila no se detenga."
+      },
+      {
+        "title": "Nada bloquea la pantalla",
+        "text": "Los reportes grandes se generan en segundo plano y quedan en «Mis reportes»; se puede seguir trabajando mientras tanto."
+      }
+    ],
+    "keywords": [
+      "React 19",
+      "TypeScript",
+      "FastAPI",
+      "PostgreSQL",
+      "Flutter",
+      "Docker",
+      "k6"
+    ],
+    "problem": "Supervisión y clientes necesitaban saber en todo momento quién estaba en faena y cuánto se consumía en casino, sin depender de consultas manuales ni de planillas sueltas, y con reportes que respondieran a medida que crecía el volumen de registros.",
+    "context": [
+      "Faena con turnos y jornadas: cada evento trae empresa, contrato y tipo de acreditación.",
+      "Servicios de casino con ventana horaria; TRASNOCHE cruza la medianoche.",
+      "Conectividad intermitente en terreno y dispositivos autorizados por casino.",
+      "Identidad por RUT chileno y zona horaria America/Santiago en todo el sistema."
+    ],
+    "decisions": [
+      {
+        "title": "Un solo servicio de validación",
+        "text": "La web, los lectores y el catálogo offline preguntan lo mismo al mismo servicio, así una regla de acceso nunca se contradice entre canales."
+      },
+      {
+        "title": "Registro idempotente",
+        "text": "Cada entrada o consumo lleva un client_event_id; los reintentos desde un lector sin red no duplican registros."
+      },
+      {
+        "title": "Workers aislados",
+        "text": "El refresco del catálogo offline y la sincronización BI corren en procesos propios: si uno falla, la API y el login siguen en pie."
+      },
+      {
+        "title": "Exportación en cola",
+        "text": "Hasta 12 mil filas se descarga directo; sobre eso se encola y queda en «Mis reportes», sin bloquear la pantalla."
+      },
+      {
+        "title": "Medir antes de optimizar",
+        "text": "Campaña de carga con k6 (humo, nominal, pico, estrés) e índices creados a partir de lo que mostró el desglose por endpoint."
+      }
+    ],
+    "architecture": {
+      "clients": [
+        {
+          "name": "Panel web",
+          "detail": "React 19 · TypeScript · Tailwind"
+        },
+        {
+          "name": "Lector de acceso",
+          "detail": "Flutter · terminal 2D"
+        },
+        {
+          "name": "Kiosco de casino",
+          "detail": "Flutter · tablet Android"
+        },
+        {
+          "name": "Power BI de clientes",
+          "detail": "feed OData con auditoría"
+        }
+      ],
+      "services": [
+        {
+          "name": "API FastAPI",
+          "detail": "async · SQLAlchemy 2 · asyncpg · JWT",
+          "primary": true
+        },
+        {
+          "name": "catalogo_refresh_worker",
+          "detail": "catálogo offline cada 15 min"
+        },
+        {
+          "name": "bi_sync_worker",
+          "detail": "sincronización para BI"
+        }
+      ],
+      "data": [
+        {
+          "name": "PostgreSQL 16",
+          "detail": "~20 M filas operativas · índices dedicados",
+          "primary": true
+        },
+        {
+          "name": "MongoDB",
+          "detail": "origen de la migración de datos"
+        }
+      ]
+    },
+    "results": [
+      "Supervisión obtiene dashboard, reportes filtrables y Excel sin pedirle a nadie una consulta.",
+      "La API se validó con pruebas de carga que simulan lectores de acceso y casinos operando al mismo tiempo.",
+      "Clientes externos pueden actualizar su Power BI solos, con credencial y auditoría por integración."
+    ],
+    "media": [
+      {
+        "src": "/media/control-acceso/dashboard",
+        "caption": "Dashboard en vivo: personas y vehículos del día",
+        "title": "Dashboard"
+      },
+      {
+        "src": "/media/control-acceso/ficha",
+        "caption": "Consulta de ficha, estado de acceso y bloqueos",
+        "title": "Consultar ficha"
+      },
+      {
+        "src": "/media/control-acceso/reportes",
+        "caption": "Reportes filtrables con exportación a Excel",
+        "title": "Reportes"
+      },
+      {
+        "src": "/media/control-acceso/casino30",
+        "caption": "Consumo de casino cada 30 minutos",
+        "title": "Casino cada 30 min"
+      },
+      {
+        "src": "/media/control-acceso/app-peatones",
+        "caption": "Peatones",
+        "device": "phone"
+      },
+      {
+        "src": "/media/control-acceso/app-vehiculo",
+        "caption": "Vehículos",
+        "device": "phone"
+      },
+      {
+        "src": "/media/control-acceso/app-casino",
+        "caption": "Tablet de casino: marcas, repite e historial",
+        "device": "tablet"
+      }
+    ]
+  },
+  {
+    "slug": "gestion-presupuesto",
+    "name": "Kuentas Klaras",
+    "type": "App web (PWA)",
+    "entity": "Proyecto propio",
+    "startDate": "2026-05",
+    "description": "Gestión de finanzas personales: gastos por categoría y tarjeta, cuotas, suscripciones y cuentas de ahorro, con bancos chilenos y sugerencias con IA. En producción como app web instalable.",
+    "keywords": [
+      "React",
+      "Node.js"
+    ],
+    "url": "https://gastos.adaptaweb.cl/",
+    "media": [
+      {
+        "src": "/media/gastos/transacciones",
+        "title": "Transacciones",
+        "caption": "Presupuesto, revisión de pendientes e ingreso manual (datos ficticios)",
+        "device": "phone"
+      },
+      {
+        "src": "/media/gastos/cuotas",
+        "title": "Cuotas",
+        "caption": "Cuotas y suscripciones del mes, con alta de Netflix (datos ficticios)",
+        "device": "phone"
+      },
+      {
+        "src": "/media/gastos/ahorros",
+        "title": "Ahorros",
+        "caption": "Cuentas de ahorro: nueva cuenta y depósito (datos ficticios)",
+        "device": "phone"
+      },
+      {
+        "src": "/media/gastos/resumen",
+        "title": "Resumen",
+        "caption": "Disponible del mes con detalle de cuotas, gastos y suscripciones",
+        "device": "phone"
+      }
+    ],
+    "thumb": {
+      "base": "/media/gastos/transacciones",
+      "frame": "phone",
+      "alt": "Kuentas Klaras: transacciones del mes"
+    },
+    "urlLabel": "Abrir app"
+  },
+  {
+    "slug": "ideas-blueprint",
+    "name": "Ideas Blueprint",
+    "type": "Plataforma web",
+    "entity": "Proyecto propio",
+    "startDate": "2026-06",
+    "description": "Plataforma para gestionar ideas de mejora de principio a fin: tablero kanban con prioridades, taller visual para maquetar cada idea sobre capturas con pines de problema y mejora, y modo presentación. Suma herramientas de trabajo diario: homologación de planillas Excel de personal a CSV y gestión de contactos por centro de trabajo con auditoría de cambios.",
+    "summary": "Tablero kanban, taller visual y modo presentación para ideas de mejora, más homologación de Excel y gestión de clientes.",
+    "keywords": [
+      "Astro",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "PostgreSQL",
+      "Konva"
+    ],
+    "url": "https://ideas.adaptaweb.cl/",
+    "urlLabel": "Visitar sitio",
+    "media": [
+      {
+        "src": "/media/ideas/tablero",
+        "title": "Tablero",
+        "caption": "Tablero kanban por estado y columna de prioridades"
+      },
+      {
+        "src": "/media/ideas/taller",
+        "title": "Taller y presentación",
+        "caption": "Taller visual con línea de tiempo y modo presentación"
+      },
+      {
+        "src": "/media/ideas/homologacion",
+        "title": "Homologación",
+        "caption": "Excel de personal convertido a CSV (datos ficticios)"
+      },
+      {
+        "src": "/media/ideas/clientes",
+        "title": "Clientes",
+        "caption": "Contactos por centro de trabajo (datos ficticios)"
+      }
+    ],
+    "thumb": {
+      "base": "/media/ideas/tablero",
+      "frame": "browser",
+      "domain": "ideas.adaptaweb.cl",
+      "alt": "Ideas Blueprint: tablero de ideas"
+    }
+  },
+  {
+    "slug": "kecomo",
+    "name": "KeComo",
+    "type": "App móvil",
+    "entity": "Proyecto propio",
+    "startDate": "2026-06",
+    "description": "App para registrar los alimentos que consumes y detectar posibles alérgenos, con reportes en PDF.",
+    "keywords": [
+      "Flutter",
+      "Riverpod",
+      "SQLite",
+      "PDF"
+    ],
+    "media": [
+      {
+        "src": "/media/kecomo/app",
+        "caption": "Registro de comidas, reacciones y resumen semanal",
+        "device": "phone"
+      }
+    ],
+    "thumb": {
+      "base": "/media/kecomo/app",
+      "frame": "phone",
+      "alt": "KeComo: pantalla Hoy con el registro de comidas"
+    }
+  },
+  {
+    "slug": "lector-acceso",
+    "name": "Lector de acceso offline-first",
+    "type": "App Flutter",
+    "entity": "Proyecto propio · parte de Control de Acceso y Casino",
+    "startDate": "2026-08",
+    "description": "App para terminales rugged con lector 2D o teléfonos con cámara que valida y registra entradas y salidas de personas y vehículos, también sin red.",
+    "summary": "App para terminales 2D que registra sin red: caché de bloqueos con delta-sync y cola sin duplicados.",
+    "keywords": [
+      "Flutter",
+      "Riverpod",
+      "drift",
+      "dio",
+      "mobile_scanner"
+    ],
+    "problem": "En portería la señal se corta, pero la fila no espera: el lector tenía que decidir y registrar igual.",
+    "context": [
+      "Terminales rugged con lector 2D por hardware y teléfonos con cámara.",
+      "Bloqueos que deben respetarse aunque no haya conexión."
+    ],
+    "decisions": [
+      {
+        "title": "Una interfaz de escaneo",
+        "text": "ScannerService abstrae cámara (mobile_scanner) y lector por hardware (MethodChannel)."
+      },
+      {
+        "title": "Caché de bloqueos",
+        "text": "Sin red, la app usa la última ficha guardada y le sobrepone los bloqueos activos sincronizados."
+      },
+      {
+        "title": "Outbox idempotente",
+        "text": "Los registros sin red quedan en cola local (drift) y se reenvían al reconectar, sin duplicarse."
+      }
+    ],
+    "results": [
+      "La portería sigue operando sin conexión y el backend recibe cada evento una sola vez."
+    ],
+    "media": [
+      {
+        "src": "/media/control-acceso/app-peatones",
+        "caption": "Peatones",
+        "device": "phone"
+      },
+      {
+        "src": "/media/control-acceso/app-vehiculo",
+        "caption": "Vehículos",
+        "device": "phone"
+      }
+    ]
+  },
+  {
+    "slug": "kiosco-casino",
+    "name": "Kiosco de casino",
+    "type": "App Flutter",
+    "entity": "Proyecto propio · parte de Control de Acceso y Casino",
+    "startDate": "2026-08",
+    "description": "App para tablets Android montadas como kiosco en cada casino: escanea la credencial, resuelve el servicio vigente y registra el consumo.",
+    "summary": "Tablets de casino autorizadas por dispositivo, servicio vigente por horario y re-login silencioso.",
+    "keywords": [
+      "Flutter",
+      "Riverpod",
+      "drift",
+      "device_info_plus"
+    ],
+    "problem": "El personal de casino necesitaba marcar consumos rápido, solo desde equipos autorizados y sin que un token vencido lo sacara de la pantalla.",
+    "context": [
+      "Tablets identificadas por dispositivo y dadas de alta por casino.",
+      "TRASNOCHE cruza medianoche: el día del servicio no es el día calendario."
+    ],
+    "decisions": [
+      {
+        "title": "Dispositivo autorizado",
+        "text": "El androidId se compara con los dispositivos del casino; si no coincide, la app se bloquea."
+      },
+      {
+        "title": "Servicio por horario",
+        "text": "La app resuelve el servicio vigente según la hora de Chile, incluido el que cruza medianoche."
+      },
+      {
+        "title": "Re-login silencioso",
+        "text": "Ante un 401 reintenta con las credenciales guardadas en vez de interrumpir al operador."
+      }
+    ],
+    "results": [
+      "Marcación continua en hora punta, solo desde equipos registrados."
+    ],
+    "media": [
+      {
+        "src": "/media/control-acceso/app-casino",
+        "caption": "Tablet de casino: marcas, repite e historial",
+        "device": "tablet"
+      }
+    ]
+  },
+  {
+    "slug": "famidoc",
+    "name": "FamiDoc",
+    "type": "App móvil",
+    "entity": "Proyecto propio",
+    "startDate": "2026-06",
+    "description": "Gestión documental para la familia, con OCR en el teléfono y cifrado local.",
+    "summary": "Escáner con OCR corriendo en el teléfono, cifrado local, desbloqueo biométrico y avisos de vencimiento antes de que caduque algo.",
+    "highlights": [
+      "El texto se reconoce sin enviar la foto a ningún lado",
+      "Se abre con huella o reconocimiento facial",
+      "Avisa 30 días antes del vencimiento"
+    ],
+    "keywords": [
+      "Flutter",
+      "Drift",
+      "ML Kit",
+      "local_auth",
+      "Cloudflare Worker"
+    ],
+    "url": "/famidoc/privacidad",
+    "urlLabel": "Política de privacidad",
+    "media": [
+      {
+        "still": "/media/famidoc/inicio.png",
+        "caption": "Inicio: documentos de la familia y próximos vencimientos",
+        "title": "Inicio",
+        "device": "phone"
+      }
+    ]
+  },
+  {
+    "slug": "banco-de-tareas",
+    "name": "Banco de Tareas",
+    "type": "Plataforma web + bot",
+    "entity": "Proyecto propio",
+    "startDate": "2026-03",
+    "description": "Tareas gamificadas que se aprueban desde Telegram.",
+    "summary": "Un bot avisa cuando alguien marca una tarea, el panel lleva el saldo y la casa reacciona sola.",
+    "highlights": [
+      "Se aprueba o se rechaza desde el chat, sin entrar al panel",
+      "Cada tarea suma puntos canjeables",
+      "Levanta completo con un docker compose up"
+    ],
+    "keywords": [
+      "Astro",
+      "SQLite",
+      "Telegraf",
+      "Docker"
+    ],
+    "url": "https://tareas.adaptaweb.cl",
+    "urlLabel": "tareas.adaptaweb.cl",
+    "media": [
+      {
+        "still": "/media/tareas/panel.jpg",
+        "caption": "Panel de tareas con el saldo de cada integrante",
+        "title": "Panel"
+      }
+    ]
+  },
+  {
+    "slug": "riego-automatico",
+    "name": "Riego automático",
+    "type": "API + IoT",
+    "entity": "Proyecto propio",
+    "startDate": "2026-08",
+    "description": "Programación de riego con tareas en segundo plano y control del hardware.",
+    "summary": "Todo servido desde un contenedor que corre en la misma casa, sin depender de un servicio externo.",
+    "highlights": [
+      "Horarios por zona, distintos para cada día",
+      "Sigue regando aunque se caiga internet",
+      "La misma API sirve para el panel y para el hardware"
+    ],
+    "keywords": [
+      "FastAPI",
+      "APScheduler",
+      "IoT",
+      "Docker"
+    ],
+    "url": "https://plantas.adaptaweb.cl",
+    "urlLabel": "plantas.adaptaweb.cl",
+    "media": [
+      {
+        "still": "/media/riego/calendario.jpg",
+        "caption": "Calendario de riegos por zona, con lo hecho y lo pendiente",
+        "title": "Calendario"
+      }
+    ]
+  }
+]

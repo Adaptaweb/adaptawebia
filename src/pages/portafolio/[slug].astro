@@ -1,0 +1,218 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Nav from "@/components/landing/Nav.astro";
+import Footer from "@/components/landing/Footer.astro";
+import Demos from "@/components/portafolio/Demos.astro";
+import Escenario from "@/components/portafolio/Escenario.astro";
+import Demo from "@/components/portafolio/Demo.astro";
+import { proyectos, fecha, type Proyecto } from "@/lib/proyectos";
+import "@/styles/landing.css";
+import "@/styles/portafolio.css";
+
+// Prerenderizadas para que entren al sitemap, que solo recoge rutas conocidas
+// en el momento de compilar.
+export const prerender = true;
+
+export const getStaticPaths = (() =>
+  proyectos.map((proyecto, i) => ({
+    params: { slug: proyecto.slug },
+    props: { proyecto, siguiente: proyectos[(i + 1) % proyectos.length] },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  proyecto: Proyecto;
+  siguiente: Proyecto;
+}
+
+const { proyecto: p, siguiente } = Astro.props;
+
+// Las pantallas anchas van en su propio escenario y los dispositivos en otro,
+// porque no comparten proporción.
+const medios = p.media ?? [];
+const pantallas = medios.filter((m) => !m.device);
+const aparatos = medios.filter((m) => m.device);
+
+const columnas = p.architecture
+  ? [
+      { titulo: "Clientes", nodos: p.architecture.clients },
+      { titulo: "Servicios", nodos: p.architecture.services },
+      { titulo: "Datos", nodos: p.architecture.data },
+    ]
+  : [];
+---
+
+<BaseLayout title={`${p.shortName ?? p.name} — AdaptaWeb`} description={p.description}>
+  <div class="aw-landing" style="width: 100%; overflow-x: clip; background: #07080A">
+    <Nav />
+
+    <main class="cs">
+      <a class="cs-volver" href="/portafolio">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
+        Portafolio
+      </a>
+
+      <header>
+        <p class="cs-meta">
+          <span>{p.type}</span>
+          <span>{p.entity}</span>
+          <span>{fecha(p.startDate, p.endDate)}</span>
+        </p>
+        <h1>{p.name}</h1>
+        <p class="cs-desc">{p.summary ?? p.description}</p>
+
+        <ul class="cs-keys">
+          {p.keywords.map((k) => <li>{k}</li>)}
+        </ul>
+
+        {
+          p.url && (
+            <a class="cs-live" href={p.url} target={p.url.startsWith("http") ? "_blank" : undefined} rel={p.url.startsWith("http") ? "noopener noreferrer" : undefined}>
+              {p.urlLabel ?? "Verlo en vivo"}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+            </a>
+          )
+        }
+      </header>
+
+      {
+        medios.length > 0 && (
+          <Demos class="cs-demos">
+            {pantallas.length > 0 && (
+              <Escenario backdrop={pantallas[0].src}>
+                <div class="cs-row">
+                  {pantallas.map((m) => (
+                    <Demo src={m.src} still={m.still} caption={m.caption} device="tablet" />
+                  ))}
+                </div>
+              </Escenario>
+            )}
+
+            {aparatos.length > 0 && (
+              <Escenario backdrop={aparatos[0].src}>
+                <div class="cs-row dos">
+                  {aparatos.map((m) => (
+                    <Demo src={m.src} still={m.still} caption={m.caption} device={m.device} />
+                  ))}
+                </div>
+              </Escenario>
+            )}
+          </Demos>
+        )
+      }
+
+      {
+        p.highlights && (
+          <section class="cs-bloque">
+            <h2 class="cs-label">Lo que resuelve</h2>
+            <ul class="cs-lista">{p.highlights.map((h) => <li>{h}</li>)}</ul>
+          </section>
+        )
+      }
+
+      {
+        p.uxDetails && (
+          <section class="cs-bloque">
+            <h2 class="cs-label">Detalles de experiencia</h2>
+            <ul class="cs-detalles">
+              {p.uxDetails.map((d) => (
+                <li>
+                  <h3>{d.title}</h3>
+                  <p>{d.body}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        p.problem && (
+          <section class="cs-bloque">
+            <h2 class="cs-label">El problema</h2>
+            <p>{p.problem}</p>
+          </section>
+        )
+      }
+
+      {
+        p.context && (
+          <section class="cs-bloque">
+            <h2 class="cs-label">Contexto</h2>
+            <ul class="cs-lista">{p.context.map((c) => <li>{c}</li>)}</ul>
+          </section>
+        )
+      }
+
+      {
+        columnas.length > 0 && (
+          <section class="cs-bloque">
+            <h2 class="cs-label">Arquitectura</h2>
+            <div class="cs-arq">
+              {columnas.map((col) => (
+                <div class="cs-col">
+                  <h3>{col.titulo}</h3>
+                  <ul>
+                    {col.nodos.map((n) => (
+                      <li class:list={["cs-nodo", n.primary && "clave"]}>
+                        <b>{n.name}</b>
+                        <span>{n.detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {
+        p.decisions && (
+          <section class="cs-bloque">
+            <h2 class="cs-label">Decisiones</h2>
+            <ul class="cs-detalles">
+              {p.decisions.map((d) => (
+                <li>
+                  <h3>{d.title}</h3>
+                  <p>{d.body}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        p.results && (
+          <section class="cs-bloque">
+            <h2 class="cs-label">Resultado</h2>
+            <ul class="cs-lista">{p.results.map((r) => <li>{r}</li>)}</ul>
+          </section>
+        )
+      }
+
+      <nav class="cs-sig" aria-label="Siguiente proyecto">
+        <p>Siguiente</p>
+        <a href={`/portafolio/${siguiente.slug}`}>
+          {siguiente.shortName ?? siguiente.name}
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+        </a>
+      </nav>
+    </main>
+
+    <div aria-hidden="true" style="position: relative; height: 164px; background: #07080A; overflow: hidden; margin-top: -1px">
+      <svg class="wave w-alt" viewBox="0 0 1440 164" preserveAspectRatio="none" style="bottom: 0">
+        <path d="M0,78 C240,146 480,10 720,78 C960,146 1200,10 1440,78 L1440,164 L0,164 Z" fill="#060708"></path>
+        <path d="M0,78 C240,146 480,10 720,78 C960,146 1200,10 1440,78" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1.5" vector-effect="non-scaling-stroke"></path>
+      </svg>
+    </div>
+
+    <Footer />
+  </div>
+</BaseLayout>
+
+<script>
+  import { initLanding } from "@/scripts/landing.js";
+  initLanding();
+</script>

@@ -1,0 +1,82 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Nav from "@/components/landing/Nav.astro";
+import Footer from "@/components/landing/Footer.astro";
+import { proyectos, portada, tieneFicha } from "@/lib/proyectos";
+import "@/styles/landing.css";
+import "@/styles/portafolio.css";
+---
+
+<BaseLayout
+  title="Portafolio — AdaptaWeb"
+  description="Nueve sistemas en producción: control de acceso, gestión de gastos, kanban visual, apps móviles offline y automatización en casa. Con qué se construyó cada uno y por qué."
+>
+  <div class="aw-landing" style="width: 100%; overflow-x: clip; background: #07080A">
+    <Nav />
+
+    <main class="pf">
+      <header class="pf-head">
+        <p class="pf-eyebrow">Portafolio</p>
+        <h1>Sistemas que ya están corriendo.</h1>
+        <p class="pf-sub">
+          No son maquetas ni plantillas adaptadas. Cada uno resuelve un problema
+          concreto de alguien, con su base de datos, su API y sus apps. Entra a
+          cualquiera para ver cómo está hecho por dentro.
+        </p>
+      </header>
+
+      <ul class="pf-grid">
+        {
+          proyectos.map((p) => {
+            const cubierta = portada(p);
+            return (
+              <li class="pf-card">
+                <a href={`/portafolio/${p.slug}`}>
+                  <span class="pf-art" data-device={cubierta?.device ?? "web"}>
+                    {cubierta && (
+                      <img src={cubierta.src} alt="" loading="lazy" decoding="async" />
+                    )}
+                  </span>
+                  <span class="pf-body">
+                    <span class="pf-type">{p.type}</span>
+                    <span class="pf-name">{p.shortName ?? p.name}</span>
+                    <span class="pf-desc">{p.description}</span>
+                    <span class="pf-keys">
+                      {p.keywords.slice(0, 4).map((k) => (
+                        <span class="pf-key">{k}</span>
+                      ))}
+                    </span>
+                    <span class="pf-go">
+                      {tieneFicha(p) ? "Ver el caso completo" : "Ver el proyecto"}
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+                    </span>
+                  </span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      <aside class="pf-cta">
+        <h2>¿Tienes un proceso que todavía vive en planillas?</h2>
+        <p>Cuéntanos qué se hace a mano y te decimos qué se puede resolver, con alcance y plazo por escrito.</p>
+        <a class="btn" href="/#cotizar">Cotizar proyecto</a>
+      </aside>
+    </main>
+
+    <div aria-hidden="true" style="position: relative; height: 164px; background: #07080A; overflow: hidden; margin-top: -1px">
+      <svg class="wave w-alt" viewBox="0 0 1440 164" preserveAspectRatio="none" style="bottom: 0">
+        <path d="M0,78 C240,146 480,10 720,78 C960,146 1200,10 1440,78 L1440,164 L0,164 Z" fill="#060708"></path>
+        <path d="M0,78 C240,146 480,10 720,78 C960,146 1200,10 1440,78" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1.5" vector-effect="non-scaling-stroke"></path>
+      </svg>
+    </div>
+
+    <Footer />
+  </div>
+</BaseLayout>
+
+<script>
+  import { initLanding } from "@/scripts/landing.js";
+  initLanding();
+</script>

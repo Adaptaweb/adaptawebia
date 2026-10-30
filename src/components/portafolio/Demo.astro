@@ -1,0 +1,85 @@
+---
+// Una demo dentro del marco de un teléfono o una tablet. `src` es la base de
+// un par de clips claro/oscuro, que el selector de Demos.astro alterna.
+// `still` es la alternativa para los proyectos sin demo grabada.
+interface Props {
+  src?: string;
+  still?: string;
+  caption: string;
+  device?: "phone" | "tablet";
+  class?: string;
+}
+
+const { src, still, caption, device = "tablet", class: className } = Astro.props;
+---
+
+<figure class:list={["demo", device, className]}>
+  <div class="frame">
+    {
+      src ? (
+        <video
+          data-autoplay
+          data-base={src}
+          data-phase="claro"
+          src={`${src}-claro.mp4`}
+          poster={`${src}-claro.webp`}
+          muted
+          loop
+          playsinline
+          preload="none"
+          aria-label={caption}
+        />
+      ) : (
+        <img src={still} alt={caption} loading="lazy" decoding="async" />
+      )
+    }
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .demo { display: grid; justify-items: center; gap: 14px; min-width: 0; }
+
+  .frame {
+    position: relative;
+    width: 100%;
+    background: linear-gradient(145deg, #2b2e33, #131416);
+    box-shadow:
+      0 0 0 1px #3a3e44 inset,
+      0 50px 80px -40px rgb(0 0 0 / 0.9),
+      0 30px 80px -45px rgb(69 255 140 / 0.3);
+    transition: transform .35s ease, box-shadow .35s ease;
+  }
+  .frame:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 0 0 1px #4a5058 inset,
+      0 60px 100px -40px rgb(0 0 0 / 0.95),
+      0 30px 100px -35px rgb(69 255 140 / 0.42);
+  }
+
+  video, img { display: block; width: 100%; height: 100%; object-fit: cover; background: #0f1113; }
+
+  /* Teléfono: pantalla 1080 x 2340 con la cámara en perforación */
+  .phone .frame { width: min(100%, 280px); aspect-ratio: 1080 / 2340; padding: 10px; border-radius: 44px; }
+  .phone .frame::after {
+    content: "";
+    position: absolute; top: 20px; left: 50%;
+    width: 12px; height: 12px; margin-left: -6px;
+    border-radius: 50%; background: #050505; box-shadow: 0 0 0 2px #1c1e21;
+  }
+  .phone video, .phone img { border-radius: 35px; }
+
+  /* Tablet: pantalla 1440 x 900 */
+  .tablet .frame { aspect-ratio: 1440 / 900; padding: 14px; border-radius: 30px; }
+  .tablet video, .tablet img { border-radius: 18px; }
+
+  figcaption {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px; border-radius: 999px;
+    background: rgb(16 17 20 / 0.78);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    font-size: 13px; font-weight: 600; color: #C9C9CE; text-align: center;
+  }
+</style>
