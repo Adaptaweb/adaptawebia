@@ -4,9 +4,22 @@ import "../styles/globals.css";
 interface Props {
   title: string;
   description?: string;
+  /** Ruta de la imagen de compartir, relativa al dominio. */
+  image?: string;
+  /** Paginas que no deben indexarse, como el 404. */
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, image = "/og.jpg", noindex = false } = Astro.props;
+
+const resumen =
+  description ??
+  "Desarrollamos webs, apps moviles y sistemas internos a medida. De la primera reunion al lanzamiento en 2 a 3 semanas, con alcance y precio por escrito.";
+
+// Astro.site viene de astro.config.mjs; sin el, WhatsApp y LinkedIn no
+// resuelven la imagen porque Open Graph exige URL absolutas.
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imagenAbsoluta = new URL(image, Astro.site);
 ---
 
 <!doctype html>
@@ -15,8 +28,26 @@ const { title, description } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <meta name="description" content={description ?? "AdaptaWeb — Desarrollo inteligente con IA"} />
+    <meta name="description" content={resumen} />
     <meta name="theme-color" content="#0A0A0B" />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AdaptaWeb" />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={resumen} />
+    <meta property="og:image" content={imagenAbsoluta} />
+    <meta property="og:image:width" content="800" />
+    <meta property="og:image:height" content="420" />
+    <meta property="og:image:alt" content="AdaptaWeb — webs, apps y sistemas a medida" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={resumen} />
+    <meta name="twitter:image" content={imagenAbsoluta} />
     <link rel="icon" href="/fav.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

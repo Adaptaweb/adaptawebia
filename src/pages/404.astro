@@ -1,0 +1,106 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Logo from "../components/Logo.astro";
+import "../styles/landing.css";
+
+const atajos = [
+  { href: "/#servicios", texto: "Servicios", detalle: "Qué incluye un proyecto" },
+  { href: "/#trabajo", texto: "Trabajo real", detalle: "Siete sistemas en producción" },
+  { href: "/#faq", texto: "Preguntas", detalle: "Precios, plazos y alcance" },
+  { href: "/#contacto", texto: "Contacto", detalle: "Cuéntanos qué necesitas" },
+];
+---
+
+<BaseLayout
+  title="Página no encontrada — AdaptaWeb"
+  description="Esta dirección no existe en adaptaweb.cl. Te dejamos los atajos a lo que sí está."
+  noindex
+>
+  <div class="aw-landing e404" style="width: 100%; overflow-x: clip; background: #07080A">
+    <main class="e404-in">
+      <a class="e404-logo" href="/" aria-label="Volver al inicio">
+        <Logo variant="horizontal" size={38} />
+      </a>
+
+      <p class="e404-num" aria-hidden="true">404</p>
+      <h1>Esta página no existe.</h1>
+      <p class="e404-sub">
+        Puede que el enlace esté roto o que la hayamos movido. Lo que buscas
+        probablemente está en una de estas.
+      </p>
+
+      <ul class="e404-list">
+        {atajos.map((a) => (
+          <li>
+            <a href={a.href}>
+              <span class="e404-t">{a.texto}</span>
+              <span class="e404-d">{a.detalle}</span>
+              <span class="e404-ar" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="e404-cta">
+        <a class="btn" href="/">Ir al inicio</a>
+        <a class="e404-mail" href="mailto:hola@adaptaweb.cl">o escríbenos a hola@adaptaweb.cl</a>
+      </div>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .e404 { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 72px 24px; }
+  .e404-in { width: 100%; max-width: 640px; }
+
+  .e404-logo { display: inline-flex; margin-bottom: 52px; color: #F5F5F7; text-decoration: none; }
+
+  .e404-num {
+    margin: 0 0 14px;
+    font-family: "Space Mono", monospace;
+    font-size: 13px; font-weight: 700; letter-spacing: .2em;
+    color: #45FF8C;
+  }
+  .e404 h1 {
+    margin: 0 0 16px;
+    font-size: clamp(34px, 6.4vw, 52px);
+    line-height: 1.05; letter-spacing: -.045em; font-weight: 750;
+    color: #F5F5F7;
+  }
+  .e404-sub { margin: 0 0 40px; max-width: 46ch; font-size: 17px; line-height: 1.6; color: #A1A1A6; }
+
+  .e404-list { margin: 0 0 40px; padding: 0; list-style: none; border-top: 1px solid rgba(255,255,255,.1); }
+  .e404-list li { border-bottom: 1px solid rgba(255,255,255,.1); }
+  .e404-list a {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 4px; text-decoration: none; color: #F5F5F7;
+    transition: color .3s, padding-left .4s cubic-bezier(.16,1,.3,1);
+  }
+  .e404-list a:hover { color: #45FF8C; padding-left: 12px; }
+  .e404-t { font-size: 18px; font-weight: 650; letter-spacing: -.02em; }
+  .e404-d { font-size: 15px; color: #6B6B70; }
+  .e404-ar { margin-left: auto; color: #6B6B70; transition: transform .4s cubic-bezier(.16,1,.3,1); }
+  .e404-list a:hover .e404-ar { transform: translateX(5px); color: #45FF8C; }
+
+  .e404-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+  .e404 .btn {
+    background: #45FF8C; color: #04150B; text-decoration: none;
+    font-weight: 700; font-size: 16px; border-radius: 999px;
+    padding: 0 28px; min-height: 54px;
+    display: inline-flex; align-items: center;
+    box-shadow: 0 16px 44px -16px rgba(69,255,140,.75);
+  }
+  .e404-mail { font-size: 15px; color: #8E8E93; }
+  .e404-mail:hover { color: #45FF8C; }
+
+  @media (max-width: 560px) {
+    .e404-logo { margin-bottom: 38px; }
+    .e404-list a {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 3px 16px;
+    }
+    .e404-ar { grid-column: 2; grid-row: 1 / span 2; margin-left: 0; }
+  }
+</style>

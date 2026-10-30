@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>og</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    position: relative;
+    background: #07080A;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    color: #F5F5F7;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px 72px;
+  }
+  .glow {
+    position: absolute; inset: auto -180px -320px auto;
+    width: 900px; height: 900px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(69,255,140,.2), rgba(69,255,140,0) 70%);
+  }
+  .glow2 {
+    position: absolute; inset: -260px auto auto -200px;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(69,255,140,.1), rgba(69,255,140,0) 70%);
+  }
+  .in { position: relative; display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
+
+  .top { display: flex; align-items: center; gap: 18px; }
+  .rule { width: 2px; height: 36px; background: #45FF8C; border-radius: 2px; }
+  .word { font-size: 23px; font-weight: 500; letter-spacing: .26em; text-transform: uppercase; padding-left: .26em; }
+
+  h1 { font-size: 64px; line-height: 1.04; letter-spacing: -.045em; font-weight: 700; max-width: 15ch; }
+  h1 em { font-style: normal; color: #45FF8C; }
+  .sub { margin-top: 22px; font-size: 24px; line-height: 1.45; color: #A1A1A6; max-width: 34ch; }
+
+  .bot { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .pills { display: flex; gap: 12px; }
+  .pill {
+    border: 1px solid rgba(255,255,255,.16); border-radius: 999px;
+    padding: 10px 20px; font-size: 18px; color: #C9C9CE; white-space: nowrap;
+  }
+  .dom { font-family: "Space Mono", monospace; font-size: 21px; color: #45FF8C; white-space: nowrap; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="glow2"></div>
+
+  <div class="in">
+    <div class="top">
+      <svg viewBox="0 0 78 64" width="63" height="52" fill="none" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 38 H35" stroke="#45FF8C"/>
+        <path d="M6 54 L24 10 L42 54 L52 28 L62 54 L72 10" stroke="#F5F5F7"/>
+      </svg>
+      <span class="rule"></span>
+      <span class="word">AdaptaWeb</span>
+    </div>
+
+    <div>
+      <h1>Webs, apps y sistemas <em>a medida</em>.</h1>
+      <p class="sub">De la primera reunión al lanzamiento en 2 a 3 semanas, con alcance y precio por escrito.</p>
+    </div>
+
+    <div class="bot">
+      <div class="pills">
+        <span class="pill">Carga en segundos</span>
+        <span class="pill">Apps offline</span>
+        <span class="pill">Sin plantillas</span>
+      </div>
+      <span class="dom">adaptaweb.cl</span>
+    </div>
+  </div>
+</body>
+</html>
