@@ -128,17 +128,6 @@ export const prerender = true;
   // La tarjeta con demo la reproduce solo mientras el cursor está encima; el
   // resto se queda en su captura. Con varios clips, al terminar uno empieza
   // el siguiente y después del último vuelve al primero.
-  // El nombre de transición se pone solo en la tarjeta que se abre. Si lo
-  // llevaran las nueve, las ocho sin pareja en la ficha se animarían por su
-  // cuenta y el conjunto se ve roto.
-  document.querySelector(".pf-grid")?.addEventListener("click", (ev) => {
-    const card = (ev.target as Element).closest<HTMLElement>(".pf-card");
-    const nombre = card?.querySelector<HTMLElement>(".pf-name");
-    const slug = card?.querySelector("a")?.getAttribute("href")?.split("/").pop();
-    if (!nombre || !slug) return;
-    nombre.style.viewTransitionName = `caso-${slug}`;
-  });
-
   for (const card of document.querySelectorAll<HTMLElement>(".pf-card")) {
     const video = card.querySelector<HTMLVideoElement>(".pf-hover");
     if (!video) continue;
