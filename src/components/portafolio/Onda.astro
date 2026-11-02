@@ -1,0 +1,41 @@
+---
+// Un corte entre secciones: el envoltorio se pinta con el color de la que
+// termina y la onda, encima, con el de la que empieza. Es la misma regla que
+// sigue la portada, y el mismo trazado.
+interface Props {
+  de: string;
+  a: string;
+  /** Alterna el sentido de la deriva, para que dos cortes seguidos no vayan en fase. */
+  alt?: boolean;
+  /** Un filete sobre la curva, para cuando los dos colores son casi el mismo. */
+  filete?: boolean;
+}
+
+const { de, a, alt = false, filete = false } = Astro.props;
+const CURVA = "M0,78 C240,146 480,10 720,78 C960,146 1200,10 1440,78";
+---
+
+<div
+  aria-hidden="true"
+  style={`position: relative; height: 164px; background: ${de}; overflow: hidden; margin-top: -1px`}
+>
+  <svg
+    class:list={["wave", alt ? "w-alt" : "w-solo"]}
+    viewBox="0 0 1440 164"
+    preserveAspectRatio="none"
+    style="bottom: 0"
+  >
+    <path d={`${CURVA} L1440,164 L0,164 Z`} fill={a}></path>
+    {
+      filete && (
+        <path
+          d={CURVA}
+          fill="none"
+          stroke="rgba(255,255,255,.07)"
+          stroke-width="1.5"
+          vector-effect="non-scaling-stroke"
+        />
+      )
+    }
+  </svg>
+</div>

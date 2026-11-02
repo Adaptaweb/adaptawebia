@@ -5,6 +5,13 @@ import Footer from "@/components/landing/Footer.astro";
 import { proyectos, portada, tieneFicha } from "@/lib/proyectos";
 import "@/styles/landing.css";
 import "@/styles/portafolio.css";
+
+// La barra del navegador muestra el dominio cuando el proyecto esta en
+// linea; si no, el nombre corto, que es lo que diria la pestaña.
+const dominio = (p: { url?: string; shortName?: string; name: string }) =>
+  p.url?.startsWith("http")
+    ? new URL(p.url).host
+    : (p.shortName ?? p.name).toLowerCase();
 ---
 
 <BaseLayout
@@ -32,9 +39,24 @@ import "@/styles/portafolio.css";
             return (
               <li class="pf-card">
                 <a href={`/portafolio/${p.slug}`}>
-                  <span class="pf-art" data-device={cubierta?.device ?? "web"}>
-                    {cubierta && (
-                      <img src={cubierta.src} alt="" loading="lazy" decoding="async" />
+                  <span class="pf-art">
+                    {cubierta && cubierta.device === "phone" ? (
+                      <span class="dev-phone">
+                        <span class="dev-side" aria-hidden="true" />
+                        <img src={cubierta.src} alt="" loading="lazy" decoding="async" />
+                      </span>
+                    ) : (
+                      cubierta && (
+                        <span class="dev-win">
+                          <span class="dev-win-bar" aria-hidden="true">
+                            <i style="background: #FF5F57" />
+                            <i style="background: #FEBC2E" />
+                            <i style="background: #28C840" />
+                            <span class="dev-win-url">{dominio(p)}</span>
+                          </span>
+                          <img src={cubierta.src} alt="" loading="lazy" decoding="async" />
+                        </span>
+                      )
                     )}
                   </span>
                   <span class="pf-body">

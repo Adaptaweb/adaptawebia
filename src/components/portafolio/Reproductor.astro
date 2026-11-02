@@ -1,0 +1,192 @@
+---
+// Una sola ventana (o un teléfono) que reproduce varios clips seguidos, con
+// pestañas para saltar entre ellos. Cada `src` es la base de un par
+// claro/oscuro; de cuál se ve se encarga Demos.astro.
+interface Clip {
+  src?: string;
+  still?: string;
+  caption: string;
+  title?: string;
+}
+
+interface Props {
+  clips: Clip[];
+  app?: string;
+  device?: "phone" | "web";
+}
+
+const { clips, app = "adaptaweb", device = "web" } = Astro.props;
+const [primero] = clips;
+---
+
+<figure class:list={["rep", device]} data-playlist={JSON.stringify(clips)}>
+  <div class="rep-frame">
+    {
+      device === "web" && (
+        <div class="dev-win-bar" aria-hidden="true">
+          <i style="background: #FF5F57" />
+          <i style="background: #FEBC2E" />
+          <i style="background: #28C840" />
+          <span class="dev-win-url">
+            {app} · <b data-title>{primero.title ?? primero.caption}</b>
+          </span>
+        </div>
+      )
+    }
+    {device === "phone" && <span class="dev-side" aria-hidden="true" />}
+    {device === "phone" && <b data-title hidden>{primero.title ?? primero.caption}</b>}
+
+    {
+      primero.src ? (
+        <video
+          data-autoplay
+          data-base={primero.src}
+          data-phase="claro"
+          src={`${primero.src}-claro.mp4`}
+          poster={`${primero.src}-claro.webp`}
+          muted
+          playsinline
+          preload="none"
+          aria-label={primero.caption}
+        />
+      ) : (
+        <img src={primero.still} alt={primero.caption} loading="lazy" decoding="async" />
+      )
+    }
+  </div>
+
+  <figcaption>
+    <span class="rep-live" aria-hidden="true"></span>
+    <span data-caption>{primero.caption}</span>
+  </figcaption>
+
+  {
+    clips.length > 1 && (
+      <div class="rep-tabs" role="tablist" aria-label="Pantallas de la demo">
+        {clips.map((c, i) => (
+          <button type="button" role="tab" aria-selected={i === 0 ? "true" : "false"} data-index={i}>
+            {c.title ?? c.caption}
+          </button>
+        ))}
+      </div>
+    )
+  }
+</figure>
+
+<script>
+  import { changeClip, type Phase } from "@/lib/demo-tema";
+
+  type Clip = { src?: string; still?: string; caption: string; title?: string };
+
+  // La fase que muestra el Demos que contiene al elemento (clara si no hay).
+  const faseDe = (el: Element): Phase =>
+    (el.closest<HTMLElement>("[data-demo-mode]")?.dataset.phase as Phase | undefined) ?? "claro";
+
+  document.querySelectorAll<HTMLElement>("[data-playlist]").forEach((root) => {
+    const clips: Clip[] = JSON.parse(root.dataset.playlist ?? "[]");
+    const video = root.querySelector("video");
+    const titulo = root.querySelector<HTMLElement>("[data-title]");
+    const pie = root.querySelector<HTMLElement>("[data-caption]")!;
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    if (!video || clips.length < 2) return;
+    let actual = 0;
+
+    function mostrar(i: number) {
+      actual = (i + clips.length) % clips.length;
+      const clip = clips[actual];
+      if (!clip.src) return;
+      changeClip(video!, clip.src, faseDe(root));
+      video!.setAttribute("aria-label", clip.caption);
+      if (titulo) titulo.textContent = clip.title ?? clip.caption;
+      pie.textContent = clip.caption;
+      tabs.forEach((t, j) => t.setAttribute("aria-selected", String(j === actual)));
+    }
+
+    // Al terminar un clip pasa solo al siguiente, como una presentación.
+    video.addEventListener("ended", () => mostrar(actual + 1));
+    tabs.forEach((t, i) => t.addEventListener("click", () => mostrar(i)));
+  });
+</script>
+
+<style>
+  .rep { display: grid; justify-items: center; gap: 14px; min-width: 0; margin: 0; }
+
+  /* La ventana es la misma de Trabajo real en la portada. */
+  .rep.web .rep-frame {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #0D0E10;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 42px 86px -36px rgb(0 0 0 / 0.95),
+      0 30px 90px -44px rgb(69 255 140 / 0.35);
+  }
+  .rep.web video,
+  .rep.web img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: top left;
+    background: #0f1113;
+  }
+
+  /* El teléfono, con sus botones laterales y la isla. */
+  .rep.phone .rep-frame {
+    position: relative;
+    width: min(100%, 300px);
+    aspect-ratio: 1080 / 2338;
+    padding: 7px;
+    border-radius: 36px;
+    background: linear-gradient(150deg, #4C515A, #23262B 38%, #15171A);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.16),
+      0 40px 80px -32px rgb(0 0 0 / 0.95);
+  }
+  .rep.phone .rep-frame::after {
+    content: "";
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 32%; height: 10px; border-radius: 999px; background: #0A0B0C; z-index: 3;
+  }
+  .rep.phone video,
+  .rep.phone img {
+    display: block; width: 100%; height: 100%;
+    object-fit: cover; border-radius: 29px; background: #0f1113;
+  }
+
+  figcaption {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 7px 14px; border-radius: 999px;
+    background: rgb(16 17 20 / 0.78);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    font-size: 13px; font-weight: 600; color: #C9C9CE; text-align: center;
+  }
+  .rep-live {
+    flex: none; width: 8px; height: 8px; border-radius: 50%;
+    background: #45FF8C; box-shadow: 0 0 10px #45FF8C;
+    animation: latido 1.6s ease-in-out infinite;
+  }
+  @keyframes latido { 50% { opacity: .35; } }
+
+  .rep-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .rep-tabs button {
+    min-height: 40px; padding: 0 14px;
+    border: 1px solid rgb(255 255 255 / 0.12); border-radius: 999px;
+    background-color: rgb(16 17 20 / 0.78);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    color: #C9C9CE; font: 500 13px "Space Grotesk", system-ui, sans-serif;
+    cursor: pointer; transition: color .3s, background-color .3s, border-color .3s;
+    max-width: 22ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .rep-tabs button:hover { color: #F5F5F7; }
+  .rep-tabs button[aria-selected="true"] {
+    background-color: #45FF8C; border-color: #45FF8C; color: #04150B; font-weight: 650;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rep-live { animation: none; }
+  }
+</style>

@@ -38,7 +38,7 @@ export interface Proyecto {
   endDate?: string;
   description: string;
   summary?: string;
-  highlights?: string[];
+  highlights?: (string | { title: string; text: string })[];
   uxDetails?: Detalle[];
   keywords: string[];
   problem?: string;
@@ -62,6 +62,17 @@ export const tieneFicha = (p: Proyecto) => Boolean(p.problem);
 export const fichas = proyectos.filter(tieneFicha);
 
 export const porSlug = (slug: string) => proyectos.find((p) => p.slug === slug);
+
+/** Separa los highlights en frases sueltas y fichas con título. */
+export function partirHighlights(lista: Proyecto["highlights"]) {
+  const frases: string[] = [];
+  const fichas: Detalle[] = [];
+  for (const h of lista ?? []) {
+    if (typeof h === "string") frases.push(h);
+    else fichas.push({ title: h.title, body: h.text });
+  }
+  return { frases, fichas };
+}
 
 const MESES = [
   "enero", "febrero", "marzo", "abril", "mayo", "junio",

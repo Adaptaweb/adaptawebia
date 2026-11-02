@@ -4,12 +4,15 @@
 // barrido, Claro u Oscuro.
 interface Props {
   class?: string;
+  /** Falso cuando no hay clips que alternar. */
+  selector?: boolean;
 }
 
-const { class: className } = Astro.props;
+const { class: className, selector = true } = Astro.props;
 ---
 
 <div class:list={["demos", className]} data-demo-mode="auto" data-phase="claro">
+  {selector && (
   <div class="switch" role="radiogroup" aria-label="Tema de la demostración">
     <button type="button" role="radio" aria-checked="true" data-mode="auto">Auto</button>
     <button type="button" role="radio" aria-checked="false" data-mode="claro" aria-label="Claro">
@@ -19,6 +22,7 @@ const { class: className } = Astro.props;
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"></path></svg>
     </button>
   </div>
+  )}
   <slot />
 </div>
 
@@ -60,7 +64,7 @@ const { class: className } = Astro.props;
   }
 
   for (const root of roots) {
-    root.querySelector(".switch")!.addEventListener("click", (e) => {
+    root.querySelector(".switch")?.addEventListener("click", (e) => {
       const button = (e.target as Element).closest<HTMLButtonElement>("[data-mode]");
       if (button) apply(button.dataset.mode as Mode);
     });
