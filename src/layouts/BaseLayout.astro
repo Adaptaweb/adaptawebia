@@ -57,11 +57,16 @@ const imagenAbsoluta = new URL(image, Astro.site);
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap"
     />
 
-    <!-- Barrido entre páginas. Va aquí, en línea y en la cabecera, porque el
-         recorte inicial tiene que existir antes del primer pintado: si llegara
-         con el resto de los scripts se vería la página entera un instante y
-         después el círculo. Es el mismo gesto que usan las demos del
-         portafolio para pasar de claro a oscuro. -->
+    <!-- Barrido entre páginas. Un disco del color de la página anterior tapa
+         la nueva y se encoge hacia el punto donde se hizo clic, así que la
+         página parece salir de ahí. Es el mismo gesto que usan las demos del
+         portafolio para pasar de claro a oscuro.
+
+         Va en línea y en la cabecera por dos razones: el disco tiene que estar
+         puesto antes del primer pintado, y se anima solo `transform`, que el
+         navegador compone aparte. Recortar la página con clip-path se probó
+         primero y no sirve: esa animación corre en el hilo principal, que al
+         cargar una página está ocupado, y su reloj avanzaba 11 ms en 870. -->
     <script is:inline>
       (function () {
         var CLAVE = "aw:barrido";
@@ -114,7 +119,7 @@ const imagenAbsoluta = new URL(image, Astro.site);
           true,
         );
 
-        // Al entrar: la página se revela en un círculo que crece desde ese punto.
+        // Al entrar: el disco se encoge y deja ver la página.
         var crudo = null;
         try {
           crudo = sessionStorage.getItem(CLAVE);
@@ -130,67 +135,52 @@ const imagenAbsoluta = new URL(image, Astro.site);
         }
         // Un clic viejo es de otra navegación: con el botón atrás no se repite.
         if (!d || Date.now() - d.t > 4000) return;
-
-        // En una pestaña que no se está pintando el reloj de la animación no
-        // avanza: el recorte se quedaría en circle(0%) y la página invisible.
-        // Así que ni se arma.
+        // En una pestaña que no se pinta nada se anima: mejor no tapar nada.
         if (document.visibilityState !== "visible") return;
 
-        var punto = d.x + "px " + d.y + "px";
-        var hoja = document.createElement("style");
-        hoja.textContent =
-          "html{background:" + d.fondo + "}" +
-          ".aw-barrido{clip-path:circle(0% at " + punto + ")}";
-        document.head.appendChild(hoja);
+        // El disco tiene que cubrir la ventana entera desde ese punto.
+        var lado = Math.ceil(2 * Math.hypot(innerWidth, innerHeight)) + 2;
+        var ancla =
+          "translate(" + (d.x - lado / 2) + "px, " + (d.y - lado / 2) + "px)";
 
-        document.addEventListener("DOMContentLoaded", function () {
-          var pagina = document.querySelector(".aw-landing");
-          if (!pagina) {
-            hoja.remove();
-            return;
-          }
-          pagina.classList.add("aw-barrido");
+        var disco = document.createElement("div");
+        disco.setAttribute("aria-hidden", "true");
+        disco.style.cssText =
+          "position:fixed;left:0;top:0;z-index:2147483646;pointer-events:none;" +
+          "border-radius:50%;background:" + d.fondo + ";" +
+          "width:" + lado + "px;height:" + lado + "px;" +
+          "transform:" + ancla + " scale(1);will-change:transform";
+        // Antes de que exista <body>: en la cabecera solo está <html>.
+        document.documentElement.appendChild(disco);
 
-          var limpio = false;
-          var anim = null;
-          var limpiar = function () {
-            if (limpio) return;
-            limpio = true;
-            // cancel() hace falta además de quitar la clase: con fill "both" la
-            // animación sigue imponiendo su valor aunque la regla ya no esté, y
-            // la página se quedaría recortada al 0%, o sea invisible.
-            if (anim) anim.cancel();
-            // Fuera el recorte: mientras está puesto, la barra fija se recorta con él.
-            pagina.classList.remove("aw-barrido");
-            hoja.remove();
-          };
+        var fuera = false;
+        var quitar = function () {
+          if (fuera) return;
+          fuera = true;
+          if (disco.parentNode) disco.parentNode.removeChild(disco);
+        };
 
-          anim = pagina.animate(
-            [
-              { clipPath: "circle(0% at " + punto + ")" },
-              { clipPath: "circle(150% at " + punto + ")" },
-            ],
-            { duration: DURACION, easing: CURVA, fill: "both" },
+        // requestAnimationFrame solo llega si la página pinta de verdad. Si no
+        // llega, la animación nunca correría y el disco taparía la página.
+        var pintando = false;
+        requestAnimationFrame(function () {
+          pintando = true;
+          var anim = disco.animate(
+            [{ transform: ancla + " scale(1)" }, { transform: ancla + " scale(0)" }],
+            { duration: DURACION, easing: CURVA, fill: "forwards" },
           );
-          anim.onfinish = limpiar;
-
-          // requestAnimationFrame solo llega si la página pinta de verdad. Si
-          // no llega, la animación nunca va a correr: se descubre la página.
-          var pintando = false;
-          requestAnimationFrame(function () {
-            pintando = true;
-          });
-          setTimeout(function () {
-            if (!pintando) limpiar();
-          }, 250);
-
-          // Si la pestaña se esconde a mitad, se queda congelada: mejor cortar.
-          document.addEventListener("visibilitychange", function () {
-            if (document.visibilityState !== "visible") limpiar();
-          });
-
-          setTimeout(limpiar, DURACION + 250);
+          anim.onfinish = quitar;
         });
+        setTimeout(function () {
+          if (!pintando) quitar();
+        }, 250);
+
+        // Si la pestaña se esconde a mitad, la animación se congela: cortar.
+        document.addEventListener("visibilitychange", function () {
+          if (document.visibilityState !== "visible") quitar();
+        });
+
+        setTimeout(quitar, DURACION + 400);
       })();
     </script>
   </head>
