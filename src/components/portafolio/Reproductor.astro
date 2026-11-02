@@ -7,6 +7,7 @@ interface Clip {
   still?: string;
   caption: string;
   title?: string;
+  device?: "phone" | "tablet";
 }
 
 interface Props {
@@ -15,26 +16,25 @@ interface Props {
   device?: "phone" | "tablet" | "web";
 }
 
-const { clips, app = "adaptaweb", device = "web" } = Astro.props;
+const { clips, app = "adaptaweb" } = Astro.props;
 const [primero] = clips;
+// El marco lo manda el clip que se está viendo, no el reproductor: en la misma
+// ventana conviven el panel web, el teléfono y la tablet de un mismo proyecto.
+const formato = (c: Clip) => c.device ?? "web";
+const device = formato(primero);
 ---
 
 <figure class:list={["rep", device]} data-playlist={JSON.stringify(clips)}>
   <div class="rep-frame">
-    {
-      device === "web" && (
-        <div class="dev-win-bar" aria-hidden="true">
-          <i style="background: #FF5F57" />
-          <i style="background: #FEBC2E" />
-          <i style="background: #28C840" />
-          <span class="dev-win-url">
-            {app} · <b data-title>{primero.title ?? primero.caption}</b>
-          </span>
-        </div>
-      )
-    }
-    {device === "phone" && <span class="dev-side" aria-hidden="true" />}
-    {device === "phone" && <b data-title hidden>{primero.title ?? primero.caption}</b>}
+    <div class="dev-win-bar" aria-hidden="true">
+      <i style="background: #FF5F57" />
+      <i style="background: #FEBC2E" />
+      <i style="background: #28C840" />
+      <span class="dev-win-url">
+        {app} · <b data-title>{primero.title ?? primero.caption}</b>
+      </span>
+    </div>
+    <span class="dev-side" aria-hidden="true" />
 
     {
       primero.src ? (
@@ -76,7 +76,7 @@ const [primero] = clips;
 <script>
   import { changeClip, type Phase } from "@/lib/demo-tema";
 
-  type Clip = { src?: string; still?: string; caption: string; title?: string };
+  type Clip = { src?: string; still?: string; caption: string; title?: string; device?: string };
 
   // La fase que muestra el Demos que contiene al elemento (clara si no hay).
   const faseDe = (el: Element): Phase =>
@@ -95,6 +95,9 @@ const [primero] = clips;
       actual = (i + clips.length) % clips.length;
       const clip = clips[actual];
       if (!clip.src) return;
+      // El marco acompaña al clip: web, teléfono o tablet.
+      root.classList.remove("web", "phone", "tablet");
+      root.classList.add(clip.device || "web");
       changeClip(video!, clip.src, faseDe(root));
       video!.setAttribute("aria-label", clip.caption);
       if (titulo) titulo.textContent = clip.title ?? clip.caption;
@@ -110,6 +113,13 @@ const [primero] = clips;
 
 <style>
   .rep { display: grid; justify-items: center; gap: 14px; min-width: 0; margin: 0; }
+
+  /* La barra del navegador y los botones del teléfono se dibujan siempre y se
+     enseñan según el formato: así cambiar de pestaña no rehace el marco. */
+  .rep .dev-win-bar,
+  .rep .dev-side { display: none; }
+  .rep.web .dev-win-bar { display: flex; }
+  .rep.phone .dev-side { display: block; }
 
   /* La ventana es la misma de Trabajo real en la portada. */
   .rep.web .rep-frame {

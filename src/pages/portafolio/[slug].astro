@@ -11,8 +11,8 @@ import { proyectos, fecha, partirHighlights, type Proyecto } from "@/lib/proyect
 import "@/styles/landing.css";
 import "@/styles/portafolio.css";
 
-// Prerenderizadas para que entren al sitemap, que solo recoge rutas conocidas
-// en el momento de compilar.
+// Prerenderizadas para que entren al sitemap y para que la transición entre
+// páginas tenga su regla leída antes del primer pintado.
 export const prerender = true;
 
 export const getStaticPaths = (() =>
@@ -27,18 +27,13 @@ interface Props {
 }
 
 const { proyecto: p, siguiente } = Astro.props;
-
-// Cada formato va en su propio reproductor: una tablet no cabe en el marco
-// de un teléfono, ni al revés.
-const medios = p.media ?? [];
-const grupos = (["web", "phone", "tablet"] as const)
-  .map((device) => ({ device, clips: medios.filter((m) => (m.device ?? "web") === device) }))
-  .filter((g) => g.clips.length > 0);
-
 const { frases, fichas } = partirHighlights(p.highlights);
 
-// Solo hay tema que alternar si alguna demo es un clip.
+// Todas las pantallas en un solo reproductor: en una columna que se queda
+// quieta no caben tres marcos, y el formato lo pone cada clip.
+const medios = p.media ?? [];
 const hayClips = medios.some((m) => m.src);
+const fondo = medios.find((m) => m.src)?.src;
 
 const columnas = p.architecture
   ? [
@@ -48,30 +43,10 @@ const columnas = p.architecture
     ]
   : [];
 
-// Las secciones se alternan claro / oscuro como en la portada, pero no todos
-// los proyectos tienen las mismas: el color se reparte entre las que existen,
-// y cada onda necesita saber de qué color viene y a cuál va.
 const CABECERA = "#1F1F1F";
+const CUERPO = "#0E1110";
 const CIERRE = "#07080A";
 const PIE = "#060708";
-const ALTERNA = ["#F3F5F4", "#0E1110"];
-
-const hay: Record<string, boolean> = {
-  resuelve: Boolean(p.highlights || p.uxDetails),
-  porque: Boolean(p.problem || p.context),
-  arquitectura: columnas.length > 0,
-  decisiones: Boolean(p.decisions || p.results),
-};
-const orden = ["resuelve", "porque", "arquitectura", "decisiones"].filter((k) => hay[k]);
-const fondo: Record<string, string> = {};
-orden.forEach((k, i) => (fondo[k] = ALTERNA[i % 2]));
-
-const esClaro = (k: string) => fondo[k] === ALTERNA[0];
-const primero = orden.length ? fondo[orden[0]] : CIERRE;
-const tras = (k: string) => {
-  const i = orden.indexOf(k);
-  return i === orden.length - 1 ? CIERRE : fondo[orden[i + 1]];
-};
 ---
 
 <BaseLayout title={`${p.shortName ?? p.name} — AdaptaWeb`} description={p.description}>
@@ -79,7 +54,7 @@ const tras = (k: string) => {
     <Nav />
 
     <main>
-      <!-- ============ CABECERA Y DEMOS ============ -->
+      <!-- ============ CABECERA ============ -->
       <section class="cs-sec" style={`background: ${CABECERA}`}>
         <div class="cs">
           <a class="cs-volver" href="/portafolio">
@@ -93,7 +68,7 @@ const tras = (k: string) => {
               <span>{p.entity}</span>
               <span>{fecha(p.startDate, p.endDate)}</span>
             </p>
-            <h1>{p.shortName ?? p.name}</h1>
+            <h1>{p.name}</h1>
             <p class="cs-desc">{p.summary ?? p.description}</p>
 
             <ul class="cs-keys">{p.keywords.map((k) => <li>{k}</li>)}</ul>
@@ -112,96 +87,84 @@ const tras = (k: string) => {
               )
             }
           </header>
-
-          {
-            medios.length > 0 && (
-              <Demos class="cs-demos" selector={hayClips}>
-                {grupos.map((g) => (
-                  <Escenario backdrop={g.clips[0].src}>
-                    <Reproductor clips={g.clips} app={p.shortName ?? p.name} device={g.device} />
-                  </Escenario>
-                ))}
-              </Demos>
-            )
-          }
         </div>
       </section>
 
-      <Onda de={CABECERA} a={primero} />
+      <Onda de={CABECERA} a={CUERPO} />
 
-      <!-- ============ LO QUE RESUELVE ============ -->
-      {
-        hay.resuelve && (
-          <>
-            <section class:list={["cs-sec", esClaro("resuelve") && "cs-claro"]} style={`background: ${fondo.resuelve}`}>
-              <div class="cs">
-                {(frases.length > 0 || fichas.length > 0) && (
-                  <div class="cs-bloque">
-                    <h2 class="cs-label">Lo que resuelve</h2>
-                    {frases.length > 0 && <ul class="cs-lista">{frases.map((h) => <li>{h}</li>)}</ul>}
-                    {fichas.length > 0 && (
-                      <ul class="cs-detalles">
-                        {fichas.map((d) => (
-                          <li>
-                            <h3>{d.title}</h3>
-                            <p>{d.body}</p>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
-                {p.uxDetails && (
-                  <div class="cs-bloque">
-                    <h2 class="cs-label">Detalles de experiencia</h2>
+      <!-- ============ CUERPO EN DOS COLUMNAS ============ -->
+      <!-- La demo se queda quieta a la derecha y la información pasa por
+           delante. En pantallas angostas se apila, y la demo va primero. -->
+      <section class="cs-sec" style={`background: ${CUERPO}`}>
+        <div class="cs cs-dos">
+          {
+            medios.length > 0 && (
+              <aside class="cs-escena">
+                <Demos selector={hayClips}>
+                  <Escenario backdrop={fondo}>
+                    <Reproductor clips={medios} app={p.shortName ?? p.name} />
+                  </Escenario>
+                </Demos>
+              </aside>
+            )
+          }
+
+          <div class="cs-info">
+            {
+              (frases.length > 0 || fichas.length > 0) && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Lo que resuelve</h2>
+                  {frases.length > 0 && <ul class="cs-lista">{frases.map((h) => <li>{h}</li>)}</ul>}
+                  {fichas.length > 0 && (
                     <ul class="cs-detalles">
-                      {p.uxDetails.map((d) => (
+                      {fichas.map((d) => (
                         <li>
                           <h3>{d.title}</h3>
                           <p>{d.body}</p>
                         </li>
                       ))}
                     </ul>
-                  </div>
-                )}
-              </div>
-            </section>
-            <Onda de={fondo.resuelve} a={tras("resuelve")} alt />
-          </>
-        )
-      }
+                  )}
+                </div>
+              )
+            }
 
-      <!-- ============ POR QUÉ EXISTE ============ -->
-      {
-        hay.porque && (
-          <>
-            <section class:list={["cs-sec", esClaro("porque") && "cs-claro"]} style={`background: ${fondo.porque}`}>
-              <div class="cs">
-                {p.problem && (
-                  <div class="cs-bloque">
-                    <h2 class="cs-label">El problema</h2>
-                    <p class="cs-parrafo">{p.problem}</p>
-                  </div>
-                )}
-                {p.context && (
-                  <div class="cs-bloque">
-                    <h2 class="cs-label">Contexto</h2>
-                    <ul class="cs-lista">{p.context.map((c) => <li>{c}</li>)}</ul>
-                  </div>
-                )}
-              </div>
-            </section>
-            <Onda de={fondo.porque} a={tras("porque")} />
-          </>
-        )
-      }
+            {
+              p.uxDetails && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Detalles de experiencia</h2>
+                  <ul class="cs-detalles">
+                    {p.uxDetails.map((d) => (
+                      <li>
+                        <h3>{d.title}</h3>
+                        <p>{d.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            }
 
-      <!-- ============ ARQUITECTURA ============ -->
-      {
-        hay.arquitectura && (
-          <>
-            <section class:list={["cs-sec", esClaro("arquitectura") && "cs-claro"]} style={`background: ${fondo.arquitectura}`}>
-              <div class="cs">
+            {
+              p.problem && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">El problema</h2>
+                  <p class="cs-parrafo">{p.problem}</p>
+                </div>
+              )
+            }
+
+            {
+              p.context && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Contexto</h2>
+                  <ul class="cs-lista">{p.context.map((c) => <li>{c}</li>)}</ul>
+                </div>
+              )
+            }
+
+            {
+              columnas.length > 0 && (
                 <div class="cs-bloque">
                   <h2 class="cs-label">Arquitectura</h2>
                   <div class="cs-arq">
@@ -220,44 +183,38 @@ const tras = (k: string) => {
                     ))}
                   </div>
                 </div>
-              </div>
-            </section>
-            <Onda de={fondo.arquitectura} a={tras("arquitectura")} alt />
-          </>
-        )
-      }
+              )
+            }
 
-      <!-- ============ DECISIONES Y RESULTADO ============ -->
-      {
-        hay.decisiones && (
-          <>
-            <section class:list={["cs-sec", esClaro("decisiones") && "cs-claro"]} style={`background: ${fondo.decisiones}`}>
-              <div class="cs">
-                {p.decisions && (
-                  <div class="cs-bloque">
-                    <h2 class="cs-label">Decisiones</h2>
-                    <ul class="cs-detalles">
-                      {p.decisions.map((d) => (
-                        <li>
-                          <h3>{d.title}</h3>
-                          <p>{d.body}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {p.results && (
-                  <div class="cs-bloque">
-                    <h2 class="cs-label">Resultado</h2>
-                    <ul class="cs-lista">{p.results.map((r) => <li>{r}</li>)}</ul>
-                  </div>
-                )}
-              </div>
-            </section>
-            <Onda de={fondo.decisiones} a={tras("decisiones")} />
-          </>
-        )
-      }
+            {
+              p.decisions && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Decisiones</h2>
+                  <ul class="cs-detalles">
+                    {p.decisions.map((d) => (
+                      <li>
+                        <h3>{d.title}</h3>
+                        <p>{d.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            }
+
+            {
+              p.results && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Resultado</h2>
+                  <ul class="cs-lista">{p.results.map((r) => <li>{r}</li>)}</ul>
+                </div>
+              )
+            }
+          </div>
+        </div>
+      </section>
+
+      <Onda de={CUERPO} a={CIERRE} alt />
 
       <!-- ============ SIGUIENTE ============ -->
       <section class="cs-sec" style={`background: ${CIERRE}`}>

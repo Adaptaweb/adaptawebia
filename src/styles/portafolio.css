@@ -147,18 +147,30 @@
   --borde-fuerte: rgba(255,255,255,.14);
   position: relative;
 }
-.cs-sec.cs-claro {
-  --ink: #0B0E0F;
-  --texto: #3C4442;
-  --tenue: #6E7573;
-  --acento: #0F9A47;
-  --panel: #FFFFFF;
-  --borde: rgba(11,14,15,.1);
-  --borde-fuerte: rgba(11,14,15,.14);
-}
 
 .cs { max-width: 1100px; margin: 0 auto; padding: 72px 24px; }
 .cs-sec:first-of-type .cs { padding-top: 164px; }
+
+/* El cuerpo: la demo se queda quieta a la derecha mientras la información
+   pasa por delante. La columna de la demo va primera en el documento para
+   que al apilarse en un teléfono quede arriba, y se coloca a la derecha con
+   la rejilla, no con el orden. */
+.cs-dos {
+  max-width: 1380px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+  gap: 56px;
+  align-items: start;
+}
+.cs-info { grid-column: 1; min-width: 0; }
+.cs-escena {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  position: sticky;
+  /* 96 de la barra más un respiro. */
+  top: 112px;
+}
 
 .aw-landing .cs-volver {
   display: inline-flex; align-items: center; gap: 8px;
@@ -190,7 +202,15 @@
 }
 .aw-landing .cs-live:hover { background: rgba(69,255,140,.1); border-color: rgba(69,255,140,.6); }
 
-.cs-demos { margin-top: 52px; }
+.cs-escena .demos { gap: 14px; }
+/* Dentro de la columna el marco se limita al alto de la ventana, o la demo
+   se saldría por abajo y el pegajoso dejaría de servir. */
+.cs-escena .rep.phone .rep-frame {
+  width: auto;
+  height: min(540px, calc(100svh - 300px));
+  aspect-ratio: 1080 / 2338;
+}
+.cs-escena .rep-tabs { max-height: 92px; overflow-y: auto; }
 
 .cs-bloque + .cs-bloque { margin-top: 64px; }
 .cs-label {
@@ -236,6 +256,15 @@
   transition: color .3s, gap .4s cubic-bezier(.16,1,.3,1);
 }
 .aw-landing .cs-sig a:hover { color: var(--acento); gap: 18px; }
+
+/* Bajo 1080 no hay sitio para dos columnas de lectura: se apilan, con la
+   demo arriba y sin pegar, que en vertical estorba más de lo que ayuda. */
+@media (max-width: 1080px) {
+  .cs-dos { grid-template-columns: minmax(0, 1fr); gap: 44px; }
+  .cs-info, .cs-escena { grid-column: 1; }
+  .cs-escena { position: static; grid-row: auto; }
+  .cs-escena .rep-tabs { max-height: none; }
+}
 
 @media (max-width: 760px) {
   .pf { padding-top: 132px; }
