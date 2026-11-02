@@ -41,22 +41,56 @@
   box-shadow: 0 40px 80px -42px rgba(0,0,0,.95), 0 0 70px -40px rgba(69,255,140,.5);
 }
 
-/* La portada va dentro del mismo render que usa Trabajo real en la portada:
-   ventana tipo Safari para lo que es web, teléfono para lo que es app. */
-.pf-art {
-  display: flex; align-items: flex-end; justify-content: center;
-  position: relative; overflow: hidden;
-  aspect-ratio: 16 / 10;
-  padding: 26px 26px 0;
-  background:
-    radial-gradient(120% 90% at 50% 0%, rgba(69,255,140,.1), rgba(69,255,140,0) 65%),
-    linear-gradient(160deg, #1A1D20, #0C0D0F);
-  border-bottom: 1px solid rgba(255,255,255,.08);
+/* La portada es la del portafolio: la captura ampliada y desenfocada hace de
+   fondo, y encima va el aparato. Al pasar el cursor el aparato sube y la
+   grabación aparece sobre la captura. */
+.pf-shot {
+  display: block; position: relative;
+  height: 300px; overflow: hidden;
+  background: #0C0D0F;
+  border-bottom: 1px solid rgba(255,255,255,.1);
 }
-.pf-art .dev-win { width: 100%; }
-.pf-art .dev-win img { aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; }
-.pf-art .dev-phone { width: 42%; }
-.pf-art .dev-phone img { aspect-ratio: 1080 / 1900; object-fit: cover; object-position: top center; }
+.pf-blur {
+  position: absolute; inset: -40px;
+  width: calc(100% + 80px); height: calc(100% + 80px); max-width: none;
+  object-fit: cover; filter: blur(34px); transform: scale(1.1);
+}
+
+.pf-phone {
+  position: absolute; left: 50%; top: 34px; margin-left: -85px;
+  width: 170px; height: 330px; overflow: hidden;
+  padding: 7px; border-radius: 30px;
+  background: linear-gradient(145deg, #2B2E33, #131416);
+  box-shadow: inset 0 0 0 1px #3A3E44, 0 30px 60px -20px rgb(0 0 0 / .8);
+  transition: translate .4s cubic-bezier(.2,.8,.2,1);
+}
+.pf-phone img, .pf-phone video { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 24px; }
+
+.pf-shot-win { display: grid; place-items: center; }
+.pf-win {
+  position: relative; width: min(100% - 48px, 360px);
+  overflow: hidden; border-radius: 12px; background: #0D0E10;
+  box-shadow: 0 0 0 1px #3A3E44, 0 30px 60px -20px rgb(0 0 0 / .8);
+  transition: translate .4s cubic-bezier(.2,.8,.2,1);
+}
+.pf-bar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 12px; background: #18191C; border-bottom: 1px solid #2A2D31;
+  font: 11px "Space Mono", monospace; color: #8E8E93;
+}
+.pf-bar i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.pf-bar > span { margin-left: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-screen { display: block; position: relative; aspect-ratio: 16 / 10; }
+.pf-screen img, .pf-screen video { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+
+.pf-hover { position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease; }
+.pf-phone .pf-hover { inset: 7px; width: calc(100% - 14px); height: calc(100% - 14px); }
+.pf-hover.viendo { opacity: 1; }
+
+@media (hover: hover) {
+  .pf-card:hover .pf-phone,
+  .pf-card:hover .pf-win { translate: 0 -8px; }
+}
 
 .pf-body { display: flex; flex-direction: column; gap: 10px; padding: 24px; flex: 1; }
 .pf-type {
@@ -209,6 +243,6 @@
   .cs-sec:first-of-type .cs { padding-top: 132px; }
   .pf-grid { grid-template-columns: minmax(0, 1fr); }
   .pf-cta { padding: 38px 24px; }
-  .pf-art { padding: 20px 20px 0; }
-  .pf-art .dev-phone { width: 52%; }
+  .pf-win { width: calc(100% - 32px); }
+  .pf-phone { width: 150px; height: 292px; margin-left: -75px; }
 }

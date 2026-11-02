@@ -12,7 +12,7 @@ interface Clip {
 interface Props {
   clips: Clip[];
   app?: string;
-  device?: "phone" | "web";
+  device?: "phone" | "tablet" | "web";
 }
 
 const { clips, app = "adaptaweb", device = "web" } = Astro.props;
@@ -131,6 +131,22 @@ const [primero] = clips;
     object-fit: cover;
     object-position: top left;
     background: #0f1113;
+  }
+
+  /* La tablet: pantalla 1440 x 900 dentro de su marco. */
+  .rep.tablet .rep-frame {
+    position: relative; width: 100%;
+    padding: 14px; border-radius: 28px;
+    background: linear-gradient(150deg, #33373D, #15171A 60%);
+    box-shadow:
+      inset 0 0 0 1px #3F444B,
+      0 42px 86px -36px rgb(0 0 0 / 0.95);
+  }
+  .rep.tablet video,
+  .rep.tablet img {
+    display: block; width: 100%;
+    aspect-ratio: 1440 / 900; object-fit: cover;
+    border-radius: 15px; background: #0f1113;
   }
 
   /* El teléfono, con sus botones laterales y la isla. */

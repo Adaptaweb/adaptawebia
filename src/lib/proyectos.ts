@@ -89,10 +89,24 @@ export function fecha(inicio: string, fin?: string) {
   return `${uno(inicio)} — ${uno(fin)}`;
 }
 
-/** El póster que representa al proyecto en el índice. */
+/**
+ * Lo que muestra la tarjeta del índice: la captura, el clip que se reproduce
+ * al pasar el cursor y, cuando hay varios, la lista para encadenarlos.
+ */
 export function portada(p: Proyecto) {
   const m = p.media?.[0];
   if (!m) return null;
-  if (m.still) return { src: m.still, esClip: false, device: m.device };
-  return { src: `${m.src}-claro.webp`, esClip: true, device: m.device };
+  const device = m.device ?? "web";
+  const hermanos = (p.media ?? []).filter((x) => (x.device ?? "web") === device && x.src);
+  return {
+    img: m.still ?? `${m.src}-claro.webp`,
+    video: m.src ? `${m.src}-claro.mp4` : null,
+    base: m.src ?? null,
+    clips: hermanos.length > 1 ? hermanos.map((x) => x.src!) : null,
+    device,
+  };
 }
+
+/** El rótulo de la barra del navegador: el dominio si está publicado. */
+export const dominio = (p: Proyecto) =>
+  p.url?.startsWith("http") ? new URL(p.url).host : (p.shortName ?? p.name).toLowerCase();

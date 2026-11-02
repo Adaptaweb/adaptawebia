@@ -28,11 +28,12 @@ interface Props {
 
 const { proyecto: p, siguiente } = Astro.props;
 
-// Las pantallas anchas y los dispositivos no comparten proporción, así que
-// cada grupo va en su propio reproductor con sus pestañas.
+// Cada formato va en su propio reproductor: una tablet no cabe en el marco
+// de un teléfono, ni al revés.
 const medios = p.media ?? [];
-const pantallas = medios.filter((m) => !m.device);
-const aparatos = medios.filter((m) => m.device);
+const grupos = (["web", "phone", "tablet"] as const)
+  .map((device) => ({ device, clips: medios.filter((m) => (m.device ?? "web") === device) }))
+  .filter((g) => g.clips.length > 0);
 
 const { frases, fichas } = partirHighlights(p.highlights);
 
@@ -92,7 +93,7 @@ const tras = (k: string) => {
               <span>{p.entity}</span>
               <span>{fecha(p.startDate, p.endDate)}</span>
             </p>
-            <h1>{p.name}</h1>
+            <h1 style={`view-transition-name: caso-${p.slug}`}>{p.shortName ?? p.name}</h1>
             <p class="cs-desc">{p.summary ?? p.description}</p>
 
             <ul class="cs-keys">{p.keywords.map((k) => <li>{k}</li>)}</ul>
@@ -115,16 +116,11 @@ const tras = (k: string) => {
           {
             medios.length > 0 && (
               <Demos class="cs-demos" selector={hayClips}>
-                {pantallas.length > 0 && (
-                  <Escenario backdrop={pantallas[0].src}>
-                    <Reproductor clips={pantallas} app={p.shortName ?? p.name} device="web" />
+                {grupos.map((g) => (
+                  <Escenario backdrop={g.clips[0].src}>
+                    <Reproductor clips={g.clips} app={p.shortName ?? p.name} device={g.device} />
                   </Escenario>
-                )}
-                {aparatos.length > 0 && (
-                  <Escenario backdrop={aparatos[0].src}>
-                    <Reproductor clips={aparatos} app={p.shortName ?? p.name} device="phone" />
-                  </Escenario>
-                )}
+                ))}
               </Demos>
             )
           }

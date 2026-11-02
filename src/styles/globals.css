@@ -388,3 +388,16 @@ html {
   .aw-card.is-front, .aw-orb { animation: none; }
   .aw-card, .aw-card .aw-dev, .aw-info { transition: none; }
 }
+
+/* ---------- transición entre páginas ---------- */
+/* El nombre del proyecto lleva el mismo view-transition-name en la tarjeta y
+   en el titular de su ficha, así que al navegar uno se convierte en el otro.
+   Los navegadores que no lo soportan simplemente cambian de página. */
+@view-transition { navigation: auto; }
+
+::view-transition-old(root) { animation-duration: .28s; }
+::view-transition-new(root) { animation-duration: .36s; }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}

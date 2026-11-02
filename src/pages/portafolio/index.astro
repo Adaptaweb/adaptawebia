@@ -2,16 +2,10 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Nav from "@/components/landing/Nav.astro";
 import Footer from "@/components/landing/Footer.astro";
-import { proyectos, portada, tieneFicha } from "@/lib/proyectos";
+import Onda from "@/components/portafolio/Onda.astro";
+import { proyectos, portada, dominio, tieneFicha } from "@/lib/proyectos";
 import "@/styles/landing.css";
 import "@/styles/portafolio.css";
-
-// La barra del navegador muestra el dominio cuando el proyecto esta en
-// linea; si no, el nombre corto, que es lo que diria la pestaña.
-const dominio = (p: { url?: string; shortName?: string; name: string }) =>
-  p.url?.startsWith("http")
-    ? new URL(p.url).host
-    : (p.shortName ?? p.name).toLowerCase();
 ---
 
 <BaseLayout
@@ -35,33 +29,68 @@ const dominio = (p: { url?: string; shortName?: string; name: string }) =>
       <ul class="pf-grid">
         {
           proyectos.map((p) => {
-            const cubierta = portada(p);
+            const c = portada(p);
             return (
               <li class="pf-card">
                 <a href={`/portafolio/${p.slug}`}>
-                  <span class="pf-art">
-                    {cubierta && cubierta.device === "phone" ? (
-                      <span class="dev-phone">
-                        <span class="dev-side" aria-hidden="true" />
-                        <img src={cubierta.src} alt="" loading="lazy" decoding="async" />
-                      </span>
-                    ) : (
-                      cubierta && (
-                        <span class="dev-win">
-                          <span class="dev-win-bar" aria-hidden="true">
+                  {c && (
+                    <span class:list={["pf-shot", `pf-shot-${c.device === "phone" ? "phone" : "win"}`]}>
+                      {/* La misma captura, ampliada y desenfocada, pinta el fondo. */}
+                      <img class="pf-blur" src={c.img} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+
+                      {c.device === "phone" ? (
+                        <span class="pf-phone">
+                          <img src={c.img} alt="" loading="lazy" decoding="async" />
+                          {c.video && (
+                            <video
+                              class="pf-hover"
+                              src={c.video}
+                              data-base={c.base}
+                              data-phase="claro"
+                              data-clips={c.clips ? JSON.stringify(c.clips) : undefined}
+                              muted
+                              loop={!c.clips}
+                              playsinline
+                              preload="none"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </span>
+                      ) : (
+                        <span class="pf-win">
+                          <span class="pf-bar" aria-hidden="true">
                             <i style="background: #FF5F57" />
                             <i style="background: #FEBC2E" />
                             <i style="background: #28C840" />
-                            <span class="dev-win-url">{dominio(p)}</span>
+                            <span>{dominio(p)}</span>
                           </span>
-                          <img src={cubierta.src} alt="" loading="lazy" decoding="async" />
+                          <span class="pf-screen">
+                            <img src={c.img} alt="" loading="lazy" decoding="async" />
+                            {c.video && (
+                              <video
+                                class="pf-hover"
+                                src={c.video}
+                                data-base={c.base}
+                                data-phase="claro"
+                                data-clips={c.clips ? JSON.stringify(c.clips) : undefined}
+                                muted
+                                loop={!c.clips}
+                                playsinline
+                                preload="none"
+                                aria-hidden="true"
+                              />
+                            )}
+                          </span>
                         </span>
-                      )
-                    )}
-                  </span>
+                      )}
+                    </span>
+                  )}
+
                   <span class="pf-body">
                     <span class="pf-type">{p.type}</span>
-                    <span class="pf-name">{p.shortName ?? p.name}</span>
+                    <span class="pf-name" style={`view-transition-name: caso-${p.slug}`}>
+                      {p.shortName ?? p.name}
+                    </span>
                     <span class="pf-desc">{p.description}</span>
                     <span class="pf-keys">
                       {p.keywords.slice(0, 4).map((k) => (
@@ -87,16 +116,44 @@ const dominio = (p: { url?: string; shortName?: string; name: string }) =>
       </aside>
     </main>
 
-    <div aria-hidden="true" style="position: relative; height: 164px; background: #07080A; overflow: hidden; margin-top: -1px">
-      <svg class="wave w-alt" viewBox="0 0 1440 164" preserveAspectRatio="none" style="bottom: 0">
-        <path d="M0,78 C240,146 480,10 720,78 C960,146 1200,10 1440,78 L1440,164 L0,164 Z" fill="#060708"></path>
-        <path d="M0,78 C240,146 480,10 720,78 C960,146 1200,10 1440,78" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1.5" vector-effect="non-scaling-stroke"></path>
-      </svg>
-    </div>
+    <Onda de="#07080A" a="#060708" alt filete />
 
     <Footer />
   </div>
 </BaseLayout>
+
+<script>
+  import { changeClip, loadClip, type Phase } from "@/lib/demo-tema";
+
+  // La tarjeta con demo la reproduce solo mientras el cursor está encima; el
+  // resto se queda en su captura. Con varios clips, al terminar uno empieza
+  // el siguiente y después del último vuelve al primero.
+  for (const card of document.querySelectorAll<HTMLElement>(".pf-card")) {
+    const video = card.querySelector<HTMLVideoElement>(".pf-hover");
+    if (!video) continue;
+    const clips: string[] = JSON.parse(video.dataset.clips ?? "[]");
+    const fase = () => (video.dataset.phase as Phase | undefined) ?? "claro";
+
+    video.addEventListener("playing", () => video.classList.add("viendo"));
+    video.addEventListener("ended", () => {
+      if (clips.length < 2) return;
+      const siguiente = clips[(clips.indexOf(video.dataset.base!) + 1) % clips.length];
+      changeClip(video, siguiente, fase());
+    });
+
+    const partir = () => video.play().catch(() => {});
+    const parar = () => {
+      video.pause();
+      video.classList.remove("viendo");
+      // Vuelve al primer clip para que la captura de abajo vuelva a calzar.
+      if (clips.length > 1 && video.dataset.base !== clips[0]) loadClip(video, clips[0], fase());
+      else video.currentTime = 0;
+    };
+
+    card.addEventListener("pointerenter", (e) => e.pointerType === "mouse" && partir());
+    card.addEventListener("pointerleave", (e) => e.pointerType === "mouse" && parar());
+  }
+</script>
 
 <script>
   import { initLanding } from "@/scripts/landing.js";
