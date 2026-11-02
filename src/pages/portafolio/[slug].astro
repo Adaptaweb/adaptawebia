@@ -35,6 +35,14 @@ const medios = p.media ?? [];
 const hayClips = medios.some((m) => m.src);
 const fondo = medios.find((m) => m.src)?.src;
 
+// Un proyecto con varias aplicaciones las presenta por separado: un tramo por
+// cada una, con su descripción al lado. Los demás llevan un solo tramo con
+// toda la información a la izquierda.
+const tramos = (p.grupos ?? []).map((g) => ({
+  ...g,
+  clips: medios.filter((m) => (m.device ?? "web") === g.device),
+})).filter((t) => t.clips.length > 0);
+
 const columnas = p.architecture
   ? [
       { titulo: "Clientes", nodos: p.architecture.clients },
@@ -96,20 +104,38 @@ const PIE = "#060708";
       <!-- La demo se queda quieta a la derecha y la información pasa por
            delante. En pantallas angostas se apila, y la demo va primero. -->
       <section class="cs-sec" style={`background: ${CUERPO}`}>
-        <div class="cs cs-dos">
+        <div class="cs">
           {
-            medios.length > 0 && (
-              <aside class="cs-escena">
-                <Demos selector={hayClips}>
-                  <Escenario backdrop={fondo}>
-                    <Reproductor clips={medios} app={p.shortName ?? p.name} />
-                  </Escenario>
-                </Demos>
-              </aside>
-            )
+            tramos.map((t) => (
+              <div class="cs-dos cs-tramo">
+                <div class="cs-info">
+                  <h2 class="cs-label">{t.titulo}</h2>
+                  <p class="cs-parrafo">{t.texto}</p>
+                </div>
+                <aside class="cs-escena">
+                  <Demos selector={t.clips.some((c) => c.src)}>
+                    <Escenario backdrop={t.clips.find((c) => c.src)?.src}>
+                      <Reproductor clips={t.clips} app={p.shortName ?? p.name} />
+                    </Escenario>
+                  </Demos>
+                </aside>
+              </div>
+            ))
           }
 
-          <div class="cs-info">
+          {
+            tramos.length === 0 ? (
+              <div class="cs-dos">
+                {medios.length > 0 && (
+                  <aside class="cs-escena">
+                    <Demos selector={hayClips}>
+                      <Escenario backdrop={fondo}>
+                        <Reproductor clips={medios} app={p.shortName ?? p.name} />
+                      </Escenario>
+                    </Demos>
+                  </aside>
+                )}
+                <div class="cs-info">
             {
               (frases.length > 0 || fichas.length > 0) && (
                 <div class="cs-bloque">
@@ -210,7 +236,113 @@ const PIE = "#060708";
                 </div>
               )
             }
-          </div>
+                </div>
+              </div>
+            ) : (
+              <div class="cs-info cs-solo">
+            {
+              (frases.length > 0 || fichas.length > 0) && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Lo que resuelve</h2>
+                  {frases.length > 0 && <ul class="cs-lista">{frases.map((h) => <li>{h}</li>)}</ul>}
+                  {fichas.length > 0 && (
+                    <ul class="cs-detalles">
+                      {fichas.map((d) => (
+                        <li>
+                          <h3>{d.title}</h3>
+                          <p>{d.body}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )
+            }
+
+            {
+              p.uxDetails && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Detalles de experiencia</h2>
+                  <ul class="cs-detalles">
+                    {p.uxDetails.map((d) => (
+                      <li>
+                        <h3>{d.title}</h3>
+                        <p>{d.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            }
+
+            {
+              p.problem && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">El problema</h2>
+                  <p class="cs-parrafo">{p.problem}</p>
+                </div>
+              )
+            }
+
+            {
+              p.context && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Contexto</h2>
+                  <ul class="cs-lista">{p.context.map((c) => <li>{c}</li>)}</ul>
+                </div>
+              )
+            }
+
+            {
+              columnas.length > 0 && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Arquitectura</h2>
+                  <div class="cs-arq">
+                    {columnas.map((col) => (
+                      <div class="cs-col">
+                        <h3>{col.titulo}</h3>
+                        <ul>
+                          {col.nodos.map((n) => (
+                            <li class:list={["cs-nodo", n.primary && "clave"]}>
+                              <b>{n.name}</b>
+                              <span>{n.detail}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            }
+
+            {
+              p.decisions && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Decisiones</h2>
+                  <ul class="cs-detalles">
+                    {p.decisions.map((d) => (
+                      <li>
+                        <h3>{d.title}</h3>
+                        <p>{d.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            }
+
+            {
+              p.results && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Resultado</h2>
+                  <ul class="cs-lista">{p.results.map((r) => <li>{r}</li>)}</ul>
+                </div>
+              )
+            }
+              </div>
+            )
+          }
         </div>
       </section>
 

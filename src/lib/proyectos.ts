@@ -49,6 +49,7 @@ export interface Proyecto {
   url?: string;
   urlLabel?: string;
   media?: Medio[];
+  grupos?: { titulo: string; texto: string; device: "web" | "phone" | "tablet" }[];
 }
 
 export const proyectos = datos as Proyecto[];
