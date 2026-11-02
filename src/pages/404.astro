@@ -3,6 +3,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Logo from "../components/Logo.astro";
 import "../styles/landing.css";
 
+export const prerender = true;
+
 const atajos = [
   { href: "/#servicios", texto: "Servicios", detalle: "Qué incluye un proyecto" },
   { href: "/#trabajo", texto: "Trabajo real", detalle: "Siete sistemas en producción" },

@@ -388,3 +388,16 @@ html {
   .aw-card.is-front, .aw-orb { animation: none; }
   .aw-card, .aw-card .aw-dev, .aw-info { transition: none; }
 }
+
+/* ---------- transición entre páginas ---------- */
+/* El navegador funde una página con la siguiente por su cuenta, sin que nada
+   parpadee. Es lo mismo que hace el portafolio, y para que funcione hacen
+   falta dos cosas más, las dos fuera de este archivo: que las páginas se
+   prerendericen y que astro.config lleve inlineStylesheets: "always", porque
+   esta regla tiene que estar leída antes del primer pintado y una hoja
+   enlazada no siempre llega a tiempo. */
+@view-transition { navigation: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}

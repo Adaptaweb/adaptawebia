@@ -6,6 +6,9 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://adaptaweb.cl',
+  // El CSS va dentro del HTML: la transición entre páginas necesita leer su
+  // regla antes del primer pintado, y una hoja enlazada llega tarde.
+  build: { inlineStylesheets: 'always' },
   integrations: [
     react(),
     sitemap({
