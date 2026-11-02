@@ -35,14 +35,6 @@ const medios = p.media ?? [];
 const hayClips = medios.some((m) => m.src);
 const fondo = medios.find((m) => m.src)?.src;
 
-// Un proyecto con varias aplicaciones las presenta por separado: un tramo por
-// cada una, con su descripción al lado. Los demás llevan un solo tramo con
-// toda la información a la izquierda.
-const tramos = (p.grupos ?? []).map((g) => ({
-  ...g,
-  clips: medios.filter((m) => (m.device ?? "web") === g.device),
-})).filter((t) => t.clips.length > 0);
-
 const columnas = p.architecture
   ? [
       { titulo: "Clientes", nodos: p.architecture.clients },
@@ -50,6 +42,20 @@ const columnas = p.architecture
       { titulo: "Datos", nodos: p.architecture.data },
     ]
   : [];
+
+// Con uno o ningún bloque de información la columna izquierda quedaría casi
+// vacía al lado de la demo, así que ahí la cabecera baja a su lado en vez de
+// ocupar una banda propia.
+const bloques = [
+  frases.length > 0 || fichas.length > 0,
+  Boolean(p.uxDetails),
+  Boolean(p.problem),
+  Boolean(p.context),
+  columnas.length > 0,
+  Boolean(p.decisions),
+  Boolean(p.results),
+].filter(Boolean).length;
+const cabeceraAlLado = bloques <= 1;
 
 const CABECERA = "#1F1F1F";
 const CUERPO = "#0E1110";
@@ -63,8 +69,11 @@ const PIE = "#060708";
 
     <main>
       <!-- ============ CABECERA ============ -->
-      <section class="cs-sec" style={`background: ${CABECERA}`}>
-        <div class="cs">
+      {
+        !cabeceraAlLado && (
+          <>
+            <section class="cs-sec" style={`background: ${CABECERA}`}>
+              <div class="cs">
           <a class="cs-volver" href="/portafolio">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
             Portafolio
@@ -95,254 +104,169 @@ const PIE = "#060708";
               )
             }
           </header>
-        </div>
-      </section>
-
-      <Onda de={CABECERA} a={CUERPO} />
+              </div>
+            </section>
+            <Onda de={CABECERA} a={CUERPO} />
+          </>
+        )
+      }
 
       <!-- ============ CUERPO EN DOS COLUMNAS ============ -->
       <!-- La demo se queda quieta a la derecha y la información pasa por
            delante. En pantallas angostas se apila, y la demo va primero. -->
       <section class="cs-sec" style={`background: ${CUERPO}`}>
-        <div class="cs">
+        <div class="cs cs-dos">
           {
-            tramos.map((t) => (
-              <div class="cs-dos cs-tramo">
-                <div class="cs-info">
-                  <h2 class="cs-label">{t.titulo}</h2>
-                  <p class="cs-parrafo">{t.texto}</p>
-                </div>
-                <aside class="cs-escena">
-                  <Demos selector={t.clips.some((c) => c.src)}>
-                    <Escenario backdrop={t.clips.find((c) => c.src)?.src}>
-                      <Reproductor clips={t.clips} app={p.shortName ?? p.name} />
-                    </Escenario>
-                  </Demos>
-                </aside>
-              </div>
-            ))
-          }
-
-          {
-            tramos.length === 0 ? (
-              <div class="cs-dos">
-                {medios.length > 0 && (
-                  <aside class="cs-escena">
-                    <Demos selector={hayClips}>
-                      <Escenario backdrop={fondo}>
-                        <Reproductor clips={medios} app={p.shortName ?? p.name} />
-                      </Escenario>
-                    </Demos>
-                  </aside>
-                )}
-                <div class="cs-info">
-            {
-              (frases.length > 0 || fichas.length > 0) && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Lo que resuelve</h2>
-                  {frases.length > 0 && <ul class="cs-lista">{frases.map((h) => <li>{h}</li>)}</ul>}
-                  {fichas.length > 0 && (
-                    <ul class="cs-detalles">
-                      {fichas.map((d) => (
-                        <li>
-                          <h3>{d.title}</h3>
-                          <p>{d.body}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )
-            }
-
-            {
-              p.uxDetails && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Detalles de experiencia</h2>
-                  <ul class="cs-detalles">
-                    {p.uxDetails.map((d) => (
-                      <li>
-                        <h3>{d.title}</h3>
-                        <p>{d.body}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )
-            }
-
-            {
-              p.problem && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">El problema</h2>
-                  <p class="cs-parrafo">{p.problem}</p>
-                </div>
-              )
-            }
-
-            {
-              p.context && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Contexto</h2>
-                  <ul class="cs-lista">{p.context.map((c) => <li>{c}</li>)}</ul>
-                </div>
-              )
-            }
-
-            {
-              columnas.length > 0 && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Arquitectura</h2>
-                  <div class="cs-arq">
-                    {columnas.map((col) => (
-                      <div class="cs-col">
-                        <h3>{col.titulo}</h3>
-                        <ul>
-                          {col.nodos.map((n) => (
-                            <li class:list={["cs-nodo", n.primary && "clave"]}>
-                              <b>{n.name}</b>
-                              <span>{n.detail}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            }
-
-            {
-              p.decisions && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Decisiones</h2>
-                  <ul class="cs-detalles">
-                    {p.decisions.map((d) => (
-                      <li>
-                        <h3>{d.title}</h3>
-                        <p>{d.body}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )
-            }
-
-            {
-              p.results && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Resultado</h2>
-                  <ul class="cs-lista">{p.results.map((r) => <li>{r}</li>)}</ul>
-                </div>
-              )
-            }
-                </div>
-              </div>
-            ) : (
-              <div class="cs-info cs-solo">
-            {
-              (frases.length > 0 || fichas.length > 0) && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Lo que resuelve</h2>
-                  {frases.length > 0 && <ul class="cs-lista">{frases.map((h) => <li>{h}</li>)}</ul>}
-                  {fichas.length > 0 && (
-                    <ul class="cs-detalles">
-                      {fichas.map((d) => (
-                        <li>
-                          <h3>{d.title}</h3>
-                          <p>{d.body}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )
-            }
-
-            {
-              p.uxDetails && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Detalles de experiencia</h2>
-                  <ul class="cs-detalles">
-                    {p.uxDetails.map((d) => (
-                      <li>
-                        <h3>{d.title}</h3>
-                        <p>{d.body}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )
-            }
-
-            {
-              p.problem && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">El problema</h2>
-                  <p class="cs-parrafo">{p.problem}</p>
-                </div>
-              )
-            }
-
-            {
-              p.context && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Contexto</h2>
-                  <ul class="cs-lista">{p.context.map((c) => <li>{c}</li>)}</ul>
-                </div>
-              )
-            }
-
-            {
-              columnas.length > 0 && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Arquitectura</h2>
-                  <div class="cs-arq">
-                    {columnas.map((col) => (
-                      <div class="cs-col">
-                        <h3>{col.titulo}</h3>
-                        <ul>
-                          {col.nodos.map((n) => (
-                            <li class:list={["cs-nodo", n.primary && "clave"]}>
-                              <b>{n.name}</b>
-                              <span>{n.detail}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            }
-
-            {
-              p.decisions && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Decisiones</h2>
-                  <ul class="cs-detalles">
-                    {p.decisions.map((d) => (
-                      <li>
-                        <h3>{d.title}</h3>
-                        <p>{d.body}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )
-            }
-
-            {
-              p.results && (
-                <div class="cs-bloque">
-                  <h2 class="cs-label">Resultado</h2>
-                  <ul class="cs-lista">{p.results.map((r) => <li>{r}</li>)}</ul>
-                </div>
-              )
-            }
-              </div>
+            medios.length > 0 && (
+              <aside class="cs-escena">
+                <Demos selector={hayClips}>
+                  <Escenario backdrop={fondo}>
+                    <Reproductor clips={medios} app={p.shortName ?? p.name} />
+                  </Escenario>
+                </Demos>
+              </aside>
             )
           }
+
+          <div class="cs-info">
+            {
+              cabeceraAlLado && (
+                <div class="cs-cab-lado">
+            <a class="cs-volver" href="/portafolio">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
+              Portafolio
+            </a>
+
+            <header>
+              <p class="cs-meta">
+                <span>{p.type}</span>
+                <span>{p.entity}</span>
+                <span>{fecha(p.startDate, p.endDate)}</span>
+              </p>
+              <h1>{p.name}</h1>
+              <p class="cs-desc">{p.summary ?? p.description}</p>
+
+              <ul class="cs-keys">{p.keywords.map((k) => <li>{k}</li>)}</ul>
+
+              {
+                p.url && (
+                  <a
+                    class="cs-live"
+                    href={p.url}
+                    target={p.url.startsWith("http") ? "_blank" : undefined}
+                    rel={p.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                  >
+                    {p.urlLabel ?? "Verlo en vivo"}
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+                  </a>
+                )
+              }
+            </header>
+                </div>
+              )
+            }
+
+            {
+              (frases.length > 0 || fichas.length > 0) && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Lo que resuelve</h2>
+                  {frases.length > 0 && <ul class="cs-lista">{frases.map((h) => <li>{h}</li>)}</ul>}
+                  {fichas.length > 0 && (
+                    <ul class="cs-detalles">
+                      {fichas.map((d) => (
+                        <li>
+                          <h3>{d.title}</h3>
+                          <p>{d.body}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )
+            }
+
+            {
+              p.uxDetails && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Detalles de experiencia</h2>
+                  <ul class="cs-detalles">
+                    {p.uxDetails.map((d) => (
+                      <li>
+                        <h3>{d.title}</h3>
+                        <p>{d.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            }
+
+            {
+              p.problem && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">El problema</h2>
+                  <p class="cs-parrafo">{p.problem}</p>
+                </div>
+              )
+            }
+
+            {
+              p.context && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Contexto</h2>
+                  <ul class="cs-lista">{p.context.map((c) => <li>{c}</li>)}</ul>
+                </div>
+              )
+            }
+
+            {
+              columnas.length > 0 && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Arquitectura</h2>
+                  <div class="cs-arq">
+                    {columnas.map((col) => (
+                      <div class="cs-col">
+                        <h3>{col.titulo}</h3>
+                        <ul>
+                          {col.nodos.map((n) => (
+                            <li class:list={["cs-nodo", n.primary && "clave"]}>
+                              <b>{n.name}</b>
+                              <span>{n.detail}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            }
+
+            {
+              p.decisions && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Decisiones</h2>
+                  <ul class="cs-detalles">
+                    {p.decisions.map((d) => (
+                      <li>
+                        <h3>{d.title}</h3>
+                        <p>{d.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            }
+
+            {
+              p.results && (
+                <div class="cs-bloque">
+                  <h2 class="cs-label">Resultado</h2>
+                  <ul class="cs-lista">{p.results.map((r) => <li>{r}</li>)}</ul>
+                </div>
+              )
+            }
+          </div>
         </div>
       </section>
 

@@ -169,23 +169,6 @@
         "caption": "Tablet de casino: marcas, repite e historial",
         "device": "tablet"
       }
-    ],
-    "grupos": [
-      {
-        "titulo": "Plataforma web",
-        "device": "web",
-        "texto": "El panel que usa supervisión: dashboard en vivo de personas y vehículos del día, consulta de ficha con su estado de acceso y bloqueos, reportes filtrables con exportación a Excel y el consumo de casino cada 30 minutos."
-      },
-      {
-        "titulo": "App de acceso",
-        "device": "phone",
-        "texto": "App para terminales rugged con lector 2D o teléfonos con cámara que valida y registra entradas y salidas de personas y vehículos, también sin red."
-      },
-      {
-        "titulo": "Kiosco de casino",
-        "device": "tablet",
-        "texto": "App para tablets Android montadas como kiosco en cada casino: escanea la credencial, resuelve el servicio vigente y registra el consumo."
-      }
     ]
   },
   {

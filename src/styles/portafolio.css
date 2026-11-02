@@ -163,14 +163,12 @@
   align-items: start;
 }
 .cs-info { grid-column: 1; min-width: 0; }
-/* Un tramo por aplicación: el texto arranca a la altura de su demo y entre
-   dos tramos va un filete, para que se lean como piezas distintas. */
-.cs-tramo + .cs-tramo,
-.cs-tramo + .cs-solo { margin-top: 56px; padding-top: 56px; border-top: 1px solid rgba(255,255,255,.1); }
-.cs-tramo .cs-info { padding-top: 4px; }
-.cs-tramo .cs-parrafo { font-size: 16px; }
-/* Sin demo al lado, la información se lee mejor con una medida corta. */
-.cs-solo { max-width: 820px; }
+/* En las fichas de poca información la cabecera va en esta columna, junto a
+   la demo, para no dejar una banda casi vacía arriba. */
+.cs-cab-lado { margin-bottom: 48px; }
+.cs-cab-lado h1 { font-size: clamp(32px, 3.6vw, 46px); }
+.cs-cab-lado .cs-desc { font-size: 18px; }
+.cs-cab-lado + .cs-bloque { padding-top: 0; }
 .cs-escena {
   grid-column: 2;
   grid-row: 1;
@@ -271,6 +269,7 @@
   .cs-dos { grid-template-columns: minmax(0, 1fr); gap: 44px; }
   .cs-info, .cs-escena { grid-column: 1; }
   .cs-escena { position: static; grid-row: auto; }
+  .cs-dos:has(.cs-cab-lado) .cs-info { order: -1; }
   .cs-escena .rep-tabs { max-height: none; }
 }
 
