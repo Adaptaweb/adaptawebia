@@ -3,7 +3,7 @@
 // App Store). Página estática, fuera de la navegación del sitio.
 export const prerender = true;
 
-const UPDATED = "2 de noviembre de 2026";
+const UPDATED = "4 de noviembre de 2026";
 const CONTACT = "hola@adaptaweb.cl";
 ---
 
@@ -213,6 +213,22 @@ const CONTACT = "hola@adaptaweb.cl";
         técnicos por unos pocos días para detectar errores y abusos.
       </p>
 
+      <h2>Clave de recuperación</h2>
+      <p>
+        Al crear una familia conectada, la app genera una clave de recuperación para que puedas recuperar tus
+        documentos en un teléfono nuevo si pierdes el tuyo o desinstalas la app. La clave se crea en tu teléfono y
+        <strong>nunca se envía a nuestro servidor</strong>: tú eliges dónde guardarla (por ejemplo, en tu correo o en
+        un gestor de contraseñas). Quien tenga la clave puede abrir los documentos de la familia, así que no la
+        compartas.
+      </p>
+      <p>
+        El servidor guarda solo datos derivados de la clave que no permiten reconstruirla: uno para encontrar la
+        familia, otro para comprobar que quien recupera tiene la clave, y la clave de cifrado de la familia dentro de
+        un sobre cifrado que solo se abre con tu clave de recuperación. Para evitar intentos de adivinarla, se
+        bloquean los intentos fallidos repetidos, y los demás teléfonos de la familia reciben un aviso cuando se usa.
+        Al generar una clave nueva, la anterior deja de servir; al eliminar la familia, se borra todo esto.
+      </p>
+
       <h2>Planes y pagos</h2>
       <p>
         Famidoc tiene un plan gratis y planes pagados con más espacio en la nube. Los planes se compran con Google
@@ -264,7 +280,9 @@ const CONTACT = "hola@adaptaweb.cl";
       <h2>Cuánto tiempo se guardan y cómo borrarlos</h2>
       <ul>
         <li>
-          Los datos en tu teléfono se guardan hasta que los borras o desinstalas la app. Desinstalarla los elimina.
+          Los datos en tu teléfono se guardan hasta que los borras o desinstalas la app. Desinstalarla los elimina
+          del teléfono: si no tienes otro teléfono conectado a tu familia ni tu clave de recuperación, no se pueden
+          recuperar.
         </li>
         <li>
           Un teléfono puede salir de la familia conectada en cualquier momento desde la app; quien administra la
